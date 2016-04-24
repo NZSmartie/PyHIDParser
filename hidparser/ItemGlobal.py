@@ -1,4 +1,4 @@
-from hidparser import Descriptor
+from hidparser import DescriptorBuilder
 from hidparser.Item import ItemType, Item, ValueItem
 
 from hidparser.UsagePage import UsagePage
@@ -14,6 +14,9 @@ class UsagePageItem(ValueItem):
             raise ValueError("UsagePage has invalid length")
 
         self.usage_page = UsagePage.find_usage_page(self.value)
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_usage_page(UsagePage.find_usage_page(self.value))
 
     @classmethod
     def _get_tag(cls):
@@ -127,7 +130,7 @@ class ReportCountItem(ValueItem):
 
 
 class PushItem(Item):
-    def visit(self, descriptor: Descriptor):
+    def visit(self, descriptor: DescriptorBuilder):
         descriptor.push()
 
     @classmethod
@@ -140,7 +143,7 @@ class PushItem(Item):
 
 
 class PopItem(Item):
-    def visit(self, descriptor: Descriptor):
+    def visit(self, descriptor: DescriptorBuilder):
         descriptor.pop()
 
     @classmethod

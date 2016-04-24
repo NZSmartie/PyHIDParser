@@ -1,7 +1,12 @@
+from hidparser.DescriptorBuilder import DescriptorBuilder
 from hidparser.Item import Item, ItemType, ValueItem
 
 
 class UsageItem(ValueItem):
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.add_usage(self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x08

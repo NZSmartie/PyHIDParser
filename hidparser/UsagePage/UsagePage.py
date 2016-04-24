@@ -45,10 +45,19 @@ class Usage:
 
 class UsagePage:
     def __init__(self, item):
-        if not isinstance(item, Usage):
-            raise ValueError("{} only supports {} as members".format(self.__class__.__name__, Usage.__name__))
-        self.index = item.value & 0xFFFF
-        self.value = item
+        if isinstance(item, Usage):
+            self.index = item.value & 0xFFFF
+            self.value = item
+        else:
+            for attr in dir(self):
+                member = self.__getattribute__(attr) # type: Usage
+                if not isinstance(member, Usage):
+                    continue
+                if member.value == item:
+                    self.index = member.value & 0xFFFF
+                    self.value = member
+                    return
+        raise ValueError("{} is not a valid {}".format(item.__name__, self.__class__.__name__))
 
     @classmethod
     def _get_usage_page_index(cls):

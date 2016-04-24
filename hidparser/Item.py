@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from hidparser.Descriptor import Descriptor
+from hidparser.DescriptorBuilder import DescriptorBuilder
 
 # Toddo create a Enum like class that happily converts subclasses into byte arrays
 
@@ -25,7 +25,7 @@ class Item(metaclass=_ABCMeta):
     # Abstract methods
 
     # @abstractmethod
-    def visit(self, descriptor: Descriptor):
+    def visit(self, descriptor: DescriptorBuilder):
         pass
 
     @classmethod
