@@ -31,7 +31,7 @@ At this stage, this library is still in early development and adoption is not re
   - Provide meta data about reports, such as physical descriptor index, usage switches/modifiers
 
 ## Example
-***Node: this is a mockup example, not implemented yet***
+***Note: this is a mockup example. It will not run***
 ```python
 import hidparser
 
@@ -51,4 +51,5 @@ if pointer is None:
 
 pointer.deserialise(report_data)
 print("Mouse pointer: {}".format((pointer.x, pointer.y))
+# Mouse Pointer: (144, 345)
 ```
