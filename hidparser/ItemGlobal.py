@@ -1,7 +1,18 @@
-from hidparser.Item import ItemType, Item
+from hidparser.Item import ItemType, Item, ValueItem
 
 
-class UsagePageItem(Item):
+class UsagePageItem(ValueItem):
+
+    def __init__(self, **kwargs):
+        super(UsagePageItem, self).__init__(**kwargs)
+
+        if len(self.data) not in [1,2]:
+            raise ValueError("UsagePage has invalid length")
+
+    @property
+    def usage_page(self):
+        return self.value
+
     @classmethod
     def _get_tag(cls):
         return 0x04
@@ -11,7 +22,8 @@ class UsagePageItem(Item):
         return ItemType.global_
 
 
-class LogicalMinimumItem(Item):
+class LogicalMinimumItem(ValueItem):
+
     @classmethod
     def _get_tag(cls):
         return 0x14
@@ -21,7 +33,7 @@ class LogicalMinimumItem(Item):
         return ItemType.global_
 
 
-class LogicalMaximumItem(Item):
+class LogicalMaximumItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -32,7 +44,7 @@ class LogicalMaximumItem(Item):
         return ItemType.global_
 
 
-class PhysicalMinimumItem(Item):
+class PhysicalMinimumItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -43,7 +55,7 @@ class PhysicalMinimumItem(Item):
         return ItemType.global_
 
 
-class PhysicalMaximumItem(Item):
+class PhysicalMaximumItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -54,7 +66,7 @@ class PhysicalMaximumItem(Item):
         return ItemType.global_
 
 
-class UnitExponentItem(Item):
+class UnitExponentItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -76,7 +88,7 @@ class UnitItem(Item):
         return ItemType.global_
 
 
-class ReportSizeItem(Item):
+class ReportSizeItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -87,7 +99,7 @@ class ReportSizeItem(Item):
         return ItemType.global_
 
 
-class ReportIdItem(Item):
+class ReportIdItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):
@@ -98,7 +110,7 @@ class ReportIdItem(Item):
         return ItemType.global_
 
 
-class ReportCountItem(Item):
+class ReportCountItem(ValueItem):
 
     @classmethod
     def _get_tag(cls):

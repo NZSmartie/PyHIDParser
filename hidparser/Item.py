@@ -5,6 +5,7 @@ from hidparser.helper import FlagEnum,EnumMask
 # Toddo create a Enum like class that happily converts subclasses into byte arrays
 
 from abc import ABCMeta as _ABCMeta
+import struct as _struct
 
 
 class ItemType(IntEnum):
@@ -25,7 +26,7 @@ class Item(metaclass=_ABCMeta):
         self.data = data
 
     def __repr__(self):
-        return "<{0}: {1}, {2}>".format(self.__class__.__name__, repr(self.tag), repr(self.data))
+        return "<{}: {}>".format(self.__class__.__name__, repr(self.data))
 
     @classmethod
     @abstractmethod
@@ -54,12 +55,21 @@ class Item(metaclass=_ABCMeta):
         return self._get_type()
 
     @classmethod
+    def _map_subclasses(cls, parent_class):
+        for c in parent_class.__subclasses__():
+            if not issubclass(c, cls):
+                continue
+            try:
+                key = c._get_tag()
+                cls._item_map[key] = c
+            except NotImplementedError:
+                cls._map_subclasses(c)
+
+    @classmethod
     def create(cls, tag: int, item_type: ItemType = None, data: array.array = [], long: bool = False):
         if cls._item_map is None:
             cls._item_map = {}
-            for c in cls.__subclasses__():
-                key = c._get_tag()
-                cls._item_map[key] = c
+            cls._map_subclasses(cls)
         if long:
             raise NotImplementedError("Log items are not supported by this parser yet")
 
@@ -72,6 +82,31 @@ class Item(metaclass=_ABCMeta):
             raise ValueError("Unknown tag {0} ({1})".format(tag, hex(tag)))
 
         return cls._item_map[tag](data=data, long=long)
+
+
+class ValueItem(Item):
+    value = None
+
+    def __init__(self, **kwargs):
+        super(ValueItem, self).__init__(**kwargs)
+
+        if len(self.data) == 1:
+            self.value = _struct.unpack("b", bytes(self.data))[0]
+        if len(self.data) == 2:
+            self.value = _struct.unpack("h", bytes(self.data))[0]
+        if len(self.data) == 4:
+            self.value = _struct.unpack("i", bytes(self.data))[0]
+
+    @classmethod
+    def _get_tag(cls):
+        raise NotImplementedError()
+
+    @classmethod
+    def _get_type(cls):
+        raise NotImplementedError()
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.__class__.__name__, repr(self.value))
 
 
 class ReportFlags(FlagEnum):

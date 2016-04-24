@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="hidparser",
-    version="0.1",
+    version="0.0.1",
     description="HID Descriptor Parser",
 
     license="MIT",

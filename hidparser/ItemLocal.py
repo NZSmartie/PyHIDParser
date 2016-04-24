@@ -1,7 +1,7 @@
-from hidparser.Item import Item, ItemType
+from hidparser.Item import Item, ItemType, ValueItem
 
 
-class UsageItem(Item):
+class UsageItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x08
@@ -11,7 +11,7 @@ class UsageItem(Item):
         return ItemType.local
 
 
-class UsageMinimumItem(Item):
+class UsageMinimumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x18
@@ -21,7 +21,7 @@ class UsageMinimumItem(Item):
         return ItemType.local
 
 
-class UsageMaximumItem(Item):
+class UsageMaximumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x28
@@ -31,7 +31,7 @@ class UsageMaximumItem(Item):
         return ItemType.local
 
 
-class DesignatorIndexItem(Item):
+class DesignatorIndexItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x38
@@ -41,7 +41,7 @@ class DesignatorIndexItem(Item):
         return ItemType.local
 
 
-class DesignatorMaximumItem(Item):
+class DesignatorMaximumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x48
@@ -51,7 +51,7 @@ class DesignatorMaximumItem(Item):
         return ItemType.local
 
 
-class DesignatorMinimumItem(Item):
+class DesignatorMinimumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x58
@@ -61,7 +61,7 @@ class DesignatorMinimumItem(Item):
         return ItemType.local
 
 
-class StringIndexItem(Item):
+class StringIndexItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x78
@@ -71,7 +71,7 @@ class StringIndexItem(Item):
         return ItemType.local
 
 
-class StringMinimumItem(Item):
+class StringMinimumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x88
@@ -81,7 +81,7 @@ class StringMinimumItem(Item):
         return ItemType.local
 
 
-class StringMaximumItem(Item):
+class StringMaximumItem(ValueItem):
     @classmethod
     def _get_tag(cls):
         return 0x98
