@@ -2,18 +2,17 @@ from enum import Enum
 
 
 class EnumMask(object):
-
     def __init__(self, enum, value):
         self._enum=enum
         self._value=value
 
     def __and__(self, other):
         assert isinstance(other,self._enum)
-        return self._value&other.bwv
+        return self._value&other.value
 
     def __or__(self, other):
         assert isinstance(other,self._enum)
-        return EnumMask(self._enum, self._value|other.bwv)
+        return EnumMask(self._enum, self._value|other.value)
 
     def __repr__(self):
         return "<{} for {}: {}>".format(
@@ -24,18 +23,12 @@ class EnumMask(object):
 
 
 class FlagEnum(Enum):
-    @property
-    def bwv(self):
-        cls=self.__class__
-        idx=list(cls.__members__.values()).index(self)
-        return self.value # 2**idx
-
     def __or__(self, other):
         return EnumMask(self.__class__, self.bwv|other.bwv)
 
     def __and__(self, other):
         if isinstance(other, self.__class__):
-            return self.bwv&other.bwv
+            return self.value&other.value
         elif isinstance(other, EnumMask):
             return other&self
         else:

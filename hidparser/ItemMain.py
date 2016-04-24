@@ -1,4 +1,6 @@
-from hidparser.Item import ItemType, Item, Collection, ReportFlags
+from hidparser.Item import ItemType, Item
+from hidparser.enums import Collection, ReportFlags
+from hidparser.Descriptor import Descriptor
 
 
 class InputItem(Item):
@@ -71,6 +73,11 @@ class CollectionItem(Item):
     def _get_type(cls):
         return ItemType.main
 
+    def visit(self, descriptor: Descriptor):
+        if not isinstance(self.collection, Collection):
+            raise ValueError("CollectionItem does not have a valid collection set")
+        descriptor.push_collection(self.collection)
+
     def __init__(self, **kwargs):
         super(CollectionItem, self).__init__(**kwargs)
 
@@ -83,6 +90,9 @@ class CollectionItem(Item):
 
 
 class EndCollectionItem(Item):
+    def visit(self, descriptor: Descriptor):
+        descriptor.pop_collection()
+
     @classmethod
     def _get_tag(cls):
         return 0xC0

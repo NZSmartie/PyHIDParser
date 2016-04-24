@@ -1,7 +1,11 @@
+from hidparser import Descriptor
 from hidparser.Item import ItemType, Item, ValueItem
+
+from hidparser.UsagePage import UsagePage
 
 
 class UsagePageItem(ValueItem):
+    usage_page = None
 
     def __init__(self, **kwargs):
         super(UsagePageItem, self).__init__(**kwargs)
@@ -9,9 +13,7 @@ class UsagePageItem(ValueItem):
         if len(self.data) not in [1,2]:
             raise ValueError("UsagePage has invalid length")
 
-    @property
-    def usage_page(self):
-        return self.value
+        self.usage_page = UsagePage.find_usage_page(self.value)
 
     @classmethod
     def _get_tag(cls):
@@ -20,6 +22,9 @@ class UsagePageItem(ValueItem):
     @classmethod
     def _get_type(cls):
         return ItemType.global_
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.__class__.__name__, self.usage_page.__name__)
 
 
 class LogicalMinimumItem(ValueItem):
@@ -122,6 +127,8 @@ class ReportCountItem(ValueItem):
 
 
 class PushItem(Item):
+    def visit(self, descriptor: Descriptor):
+        descriptor.push()
 
     @classmethod
     def _get_tag(cls):
@@ -133,6 +140,8 @@ class PushItem(Item):
 
 
 class PopItem(Item):
+    def visit(self, descriptor: Descriptor):
+        descriptor.pop()
 
     @classmethod
     def _get_tag(cls):

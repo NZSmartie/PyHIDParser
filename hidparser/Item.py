@@ -1,11 +1,12 @@
 from enum import Enum, IntEnum
-from array import array
-from hidparser.helper import FlagEnum,EnumMask
+from hidparser.Descriptor import Descriptor
 
 # Toddo create a Enum like class that happily converts subclasses into byte arrays
 
 from abc import ABCMeta as _ABCMeta
 import struct as _struct
+import copy as _copy
+from array import array as _array
 
 
 class ItemType(IntEnum):
@@ -16,17 +17,16 @@ class ItemType(IntEnum):
 
 
 class Item(metaclass=_ABCMeta):
-    import array
     from abc import abstractmethod
     _item_map = None
 
-    data = None  # type: array.array
+    data = None  # type: _array
 
-    def __init__(self, data: array.array = None, long: bool = False):
-        self.data = data
+    # Abstract methods
 
-    def __repr__(self):
-        return "<{}: {}>".format(self.__class__.__name__, repr(self.data))
+    # @abstractmethod
+    def visit(self, descriptor: Descriptor):
+        pass
 
     @classmethod
     @abstractmethod
@@ -37,6 +37,14 @@ class Item(metaclass=_ABCMeta):
     @abstractmethod
     def _get_type(cls):
         pass
+
+    # Concrete methods
+
+    def __init__(self, data: _array = None, long: bool = False):
+        self.data = data
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.__class__.__name__, repr(self.data))
 
     @property
     def tag(self) -> int:
@@ -66,7 +74,7 @@ class Item(metaclass=_ABCMeta):
                 cls._map_subclasses(c)
 
     @classmethod
-    def create(cls, tag: int, item_type: ItemType = None, data: array.array = [], long: bool = False):
+    def create(cls, tag: int, item_type: ItemType = None, data: _array = [], long: bool = False):
         if cls._item_map is None:
             cls._item_map = {}
             cls._map_subclasses(cls)
@@ -107,51 +115,3 @@ class ValueItem(Item):
 
     def __repr__(self):
         return "<{}: {}>".format(self.__class__.__name__, repr(self.value))
-
-
-class ReportFlags(FlagEnum):
-    constant = 0x01
-    variable = 0x02
-    relative = 0x04
-    wrap = 0x08
-    non_linear = 0x10
-    no_preferred = 0x20
-    null_state = 0x40
-    # reserved = 0x80
-    buffered_bytes = 0x100
-
-    @classmethod
-    def from_bytes(cls, data: array):
-        result = 0
-        if data is None:
-            return EnumMask(cls,result)
-        if len(data)>0:
-            result |= data[0]
-        if len(data)>1:
-            result |= data[1] << 8
-
-        return EnumMask(cls, result)
-
-    @classmethod
-    def __repr_members__(cls, value):
-        return [
-            "Data" if not value & ReportFlags.constant.value else "Constant",
-            "Array" if not value & ReportFlags.variable.value else "Variable",
-            "Absolute" if not value & ReportFlags.relative.value else "Relative",
-            "No Wrap" if not value & ReportFlags.wrap.value else "Wrap",
-            "Linear" if not value & ReportFlags.non_linear.value else "Non Linear",
-            "Prefered State" if not value & ReportFlags.no_preferred.value else "No Prefered",
-            "No Null position" if not value & ReportFlags.null_state.value else "Null state",
-            "Bit Field" if not value & ReportFlags.buffered_bytes.value else "Buffered Bytes",
-            ]
-
-
-# TODO Support vendor defined functions
-class Collection(Enum):
-    physical = 0
-    application = 1
-    logical = 2
-    report = 3
-    named_array = 4
-    usage_switch = 5
-    usage_modifier = 6
