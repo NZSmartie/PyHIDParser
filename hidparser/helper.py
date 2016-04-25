@@ -24,7 +24,7 @@ class EnumMask(object):
 
 class FlagEnum(Enum):
     def __or__(self, other):
-        return EnumMask(self.__class__, self.bwv|other.bwv)
+        return EnumMask(self.__class__, self.value|other.value)
 
     def __and__(self, other):
         if isinstance(other, self.__class__):

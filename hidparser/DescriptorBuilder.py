@@ -101,9 +101,11 @@ class DescriptorBuilder:
 
         pass
 
-    def add_usage(self, usage: Union[Usage, int]):
+    def add_usage(self, usage: Union[UsagePage, Usage, int]):
         if isinstance(usage, Usage):
             self._usages.append(usage)
+        elif isinstance(usage, UsagePage):
+            self._usages.append(usage.value)
         else:
             usage_page = self._usage_page if (usage & ~0xFFFF) == 0 else UsagePage.find_usage_page((usage & ~0xFFFF) >> 16)
             self._usages.append(usage_page.get_usage(usage & 0xFFFF))

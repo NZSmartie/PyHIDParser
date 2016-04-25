@@ -1,4 +1,6 @@
 import hidparser
+from hidparser import DescriptorBuilder, Collection, ReportType, ReportFlags
+from hidparser.UsagePage import GenericDesktop, Button
 
 from array import array
 
@@ -32,5 +34,28 @@ mouse = array('B', [
     ])
 
 if __name__ is '__main__':
+    # Todo return a Descriptor object instead of a builder
+    # This actually returns a DescriptorBuilder
     descriptor = hidparser.parse(mouse)
+
+    # Create a mouse descriptor through API
+    mouse_builder = DescriptorBuilder()
+    mouse_builder.add_usage(GenericDesktop.mouse)
+    mouse_builder.push_collection(Collection.application)
+    mouse_builder.add_usage(GenericDesktop.pointer)
+    mouse_builder.push_collection(Collection.physical)
+    mouse_builder.set_usage_range(Button(1), Button(3))
+    # mouse_builder.set_logical_range(0,1)
+    mouse_builder.report_count = 3
+    mouse_builder.report_size = 1
+    mouse_builder.add_report(ReportType.input, ReportFlags.variable)
+    mouse_builder.report_count = 1
+    mouse_builder.report_size = 5
+    mouse_builder.add_report(ReportType.input, ReportFlags.constant | ReportFlags.variable)
+    mouse_builder.add_usage(GenericDesktop.x)
+    mouse_builder.add_usage(GenericDesktop.y)
+    # mouse_builder.set_logical_range(-127,127)
+    mouse_builder.report_count = 2
+    mouse_builder.report_size = 8
+    mouse_builder.add_report(ReportType.input, ReportFlags.variable | ReportFlags.relative)
     pass

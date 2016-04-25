@@ -113,6 +113,11 @@ class UsageRange:
     def get_range(self):
         if self.minimum is None or self.maximum is None:
             raise ValueError("Usage Minimum and Usage Maximum must be set")
+        if isinstance(self.minimum, UsagePage):
+            if not isinstance(self.maximum, UsagePage):
+                raise ValueError("UsageRange type mismatch in minimum and maximum usages")
+            self.usage_page = self.minimum.__class__
+            return [self.usage_page.get_usage(value) for value in range(self.minimum.index & 0xFFFF, (self.maximum.index & 0xFFFF) + 1)]
         if self.minimum & ~0xFFFF:
             self.usage_page = UsagePage.find_usage_page((self.minimum & ~0xFFFF) >> 16)
         return [self.usage_page.get_usage(value) for value in range(self.minimum & 0xFFFF, (self.maximum & 0xFFFF) + 1)]
