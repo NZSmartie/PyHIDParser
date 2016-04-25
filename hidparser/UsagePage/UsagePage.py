@@ -68,34 +68,24 @@ class Usage:
                     usage_type.__class__.__name__,
                     UsageType.__name__)
                 )
-
         self.value = value
         self.usage_types = usage_types
 
 
-class UsagePage:
+class UsagePage(_Enum):
     def __init__(self, item):
-        if isinstance(item, Usage):
-            self.index = item.value & 0xFFFF
-            self.value = item
-        else:
-            for attr in dir(self):
-                member = self.__getattribute__(attr) # type: Usage
-                if not isinstance(member, Usage):
-                    continue
-                if member.value == item:
-                    self.index = member.value & 0xFFFF
-                    self.value = member
-                    return
-        raise ValueError("{} is not a valid {}".format(item.__name__, self.__class__.__name__))
+        if not isinstance(item, Usage):
+            raise ValueError("{} is not a valid {}".format(item.__name__, self.__class__.__name__))
+        self.index = item.value & 0xFFFF
+        self.usage = item
+        self.usage_types = item.usage_types
 
     @classmethod
     def get_usage(cls, value):
-        for attr in cls.__dict__:
-            member = cls.__dict__[attr]  # type: Usage
-            if not isinstance(member, Usage):
+        for key, member in cls.__members__.items():
+            if not isinstance(member.value, Usage):
                 continue
-            if member.value == value:
+            if member.index == value:
                 return member
         raise ValueError("{} is not a valid {}".format(value, cls.__name__))
 
