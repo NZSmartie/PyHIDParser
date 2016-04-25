@@ -17,6 +17,9 @@ class UsageItem(ValueItem):
 
 
 class UsageMinimumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_usage_range(minimum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x18
@@ -27,6 +30,9 @@ class UsageMinimumItem(ValueItem):
 
 
 class UsageMaximumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_usage_range(maximum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x28

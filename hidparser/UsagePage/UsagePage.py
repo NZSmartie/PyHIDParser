@@ -73,3 +73,16 @@ class UsagePage:
             raise ValueError("Reserved or missing usage page 0x{:04X}".format(value))
         return None
 
+
+class UsageRange:
+    def __init__(self, usage_page: UsagePage.__class__):
+        self.usage_page = usage_page
+        self.minimum = None
+        self.maximum = None
+
+    def get_range(self):
+        if self.minimum is None or self.maximum is None:
+            raise ValueError("Usage Minimum and Usage Maximum must be set")
+        if self.minimum & ~0xFFFF:
+            self.usage_page = UsagePage.find_usage_page((self.minimum & ~0xFFFF) >> 16)
+        return [self.usage_page(value) for value in range(self.minimum & 0xFFFF, (self.maximum & 0xFFFF) + 1)]

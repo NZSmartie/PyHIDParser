@@ -98,6 +98,9 @@ class UnitItem(Item):
 
 class ReportSizeItem(ValueItem):
 
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.report_size = self.value
+
     @classmethod
     def _get_tag(cls):
         return 0x74
@@ -108,6 +111,8 @@ class ReportSizeItem(ValueItem):
 
 
 class ReportIdItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_report_id(self.value)
 
     @classmethod
     def _get_tag(cls):
@@ -119,6 +124,9 @@ class ReportIdItem(ValueItem):
 
 
 class ReportCountItem(ValueItem):
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.report_count = self.value
 
     @classmethod
     def _get_tag(cls):

@@ -2,6 +2,12 @@ from array import array as _array
 from hidparser.helper import FlagEnum, EnumMask, Enum
 
 
+class ReportType(Enum):
+    input = 1
+    output = 2
+    feature = 3
+
+
 class ReportFlags(FlagEnum):
     constant = 0x01
     variable = 0x02

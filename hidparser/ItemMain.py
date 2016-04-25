@@ -1,10 +1,13 @@
 from hidparser.Item import ItemType, Item
-from hidparser.enums import Collection, ReportFlags
+from hidparser.enums import Collection, ReportFlags, ReportType
 from hidparser.DescriptorBuilder import DescriptorBuilder
 
 
 class InputItem(Item):
     flags = None # type: ReportFlags
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.add_report(ReportType.input, self.flags)
 
     @classmethod
     def _get_tag(cls):
@@ -22,8 +25,12 @@ class InputItem(Item):
     def __repr__(self):
         return "<{0}: {1}>".format(self.__class__.__name__, self.flags)
 
+
 class OutputItem(Item):
     flags = None
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.add_report(ReportType.output, self.flags)
 
     @classmethod
     def _get_tag(cls):
@@ -44,6 +51,9 @@ class OutputItem(Item):
 
 class FeatureItem(Item):
     flags = None
+
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.add_report(ReportType.feature, self.flags)
 
     @classmethod
     def _get_tag(cls):
