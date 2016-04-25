@@ -5,10 +5,20 @@ from hidparser.UsagePage.UsagePage import UsagePage, Usage, UsageType, UsageRang
 from typing import Union, List
 
 
+class ValueRange:
+    def __init__(self, minimum=None, maximum=None):
+        self.minimum = minimum
+        self.maximum = maximum
+
+    def __repr__(self):
+        return "<{}: minimum: {}, maximum: {}>".format(self.__class__.__name__, self.minimum, self.maximum)
+
 class Report:
-    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0):
+    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None):
         self.size = size
         self.count = count
+        self.logical_range = logical_range
+        self.physical_range = physical_range
         self.usages = usages
         self.usage_switches = []
         self.usage_modifiers = []
@@ -56,6 +66,9 @@ class DescriptorBuilder:
         self.report_size = 0
         self.report_count = 0
 
+        self.logical_range = ValueRange()
+        self.physical_range = ValueRange()
+
         self._collection = _CollectionElement()
         self._current_collection = self._collection
 
@@ -73,7 +86,7 @@ class DescriptorBuilder:
             usage = self._usages.pop(0) if len(self._usages) > 1 else self._usages[0]
             usages.extend(usage.get_range() if isinstance(usage, UsageRange) else [usage])
 
-        report = Report(usages, self.report_size, self.report_count)
+        report = Report(usages, self.report_size, self.report_count, _copy.copy(self.logical_range), _copy.copy(self.physical_range))
 
         if report_type is ReportType.input:
             self._report_group.inputs.append(report)
@@ -99,7 +112,19 @@ class DescriptorBuilder:
         if maximum is not None:
             usage.maximum = maximum
 
-        pass
+    def set_logical_range(self, minimum = None, maximum = None):
+        if minimum is not None:
+            self.logical_range.minimum = minimum
+
+        if maximum is not None:
+            self.logical_range.maximum = maximum
+
+    def set_physical_range(self, minimum=None, maximum=None):
+        if minimum is not None:
+            self.physical_range.minimum = minimum
+
+        if maximum is not None:
+            self.physical_range.maximum = maximum
 
     def add_usage(self, usage: Union[UsagePage, Usage, int]):
         if isinstance(usage, Usage):

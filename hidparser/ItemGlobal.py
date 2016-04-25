@@ -31,6 +31,8 @@ class UsagePageItem(ValueItem):
 
 
 class LogicalMinimumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_logical_range(minimum=self.value)
 
     @classmethod
     def _get_tag(cls):
@@ -42,6 +44,8 @@ class LogicalMinimumItem(ValueItem):
 
 
 class LogicalMaximumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_logical_range(maximum=self.value)
 
     @classmethod
     def _get_tag(cls):
@@ -53,6 +57,8 @@ class LogicalMaximumItem(ValueItem):
 
 
 class PhysicalMinimumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_physical_range(minimum=self.value)
 
     @classmethod
     def _get_tag(cls):
@@ -64,6 +70,8 @@ class PhysicalMinimumItem(ValueItem):
 
 
 class PhysicalMaximumItem(ValueItem):
+    def visit(self, descriptor: DescriptorBuilder):
+        descriptor.set_physical_range(maximum=self.value)
 
     @classmethod
     def _get_tag(cls):

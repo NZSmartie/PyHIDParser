@@ -45,7 +45,7 @@ if __name__ is '__main__':
     mouse_builder.add_usage(GenericDesktop.pointer)
     mouse_builder.push_collection(Collection.physical)
     mouse_builder.set_usage_range(Button(1), Button(3))
-    # mouse_builder.set_logical_range(0,1)
+    mouse_builder.set_logical_range(0,1)
     mouse_builder.report_count = 3
     mouse_builder.report_size = 1
     mouse_builder.add_report(ReportType.input, ReportFlags.variable)
@@ -54,7 +54,7 @@ if __name__ is '__main__':
     mouse_builder.add_report(ReportType.input, ReportFlags.constant | ReportFlags.variable)
     mouse_builder.add_usage(GenericDesktop.x)
     mouse_builder.add_usage(GenericDesktop.y)
-    # mouse_builder.set_logical_range(-127,127)
+    mouse_builder.set_logical_range(-127,127)
     mouse_builder.report_count = 2
     mouse_builder.report_size = 8
     mouse_builder.add_report(ReportType.input, ReportFlags.variable | ReportFlags.relative)
