@@ -46,7 +46,7 @@ class ReportFlags(FlagEnum):
 
 
 # TODO Support vendor defined functions
-class Collection(Enum):
+class CollectionType(Enum):
     physical = 0
     application = 1
     logical = 2

@@ -1,5 +1,5 @@
 import copy as _copy
-from hidparser.enums import Collection, ReportFlags, EnumMask, ReportType
+from hidparser.enums import CollectionType, ReportFlags, EnumMask, ReportType
 from hidparser.UsagePage.UsagePage import UsagePage, Usage, UsageType, UsageRange
 
 from typing import Union, List
@@ -12,6 +12,7 @@ class ValueRange:
 
     def __repr__(self):
         return "<{}: minimum: {}, maximum: {}>".format(self.__class__.__name__, self.minimum, self.maximum)
+
 
 class Report:
     def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None):
@@ -32,24 +33,24 @@ class ReportGroup:
 
 
 class _CollectionElement:
-    def __init__(self, collection: Collection = None, usage: Usage = None, parent = None):
-        self.collection = collection
+    def __init__(self, collection_type: CollectionType = None, usage: Usage = None, parent = None):
+        self.collection_type = collection_type
         self.parent = parent
-        self.children = []
+        self.children = [] # type: List[_CollectionElement]
         if parent is not None:
             if usage is None:
                 raise ValueError("Collection item must have a usage")
-            if collection == Collection.application and UsageType.collection_application not in usage.usage_types:
+            if collection_type == CollectionType.application and UsageType.collection_application not in usage.usage_types:
                 raise ValueError("Usage can not be applied to application collection")
-            if collection == Collection.physical and UsageType.collection_physical not in usage.usage_types:
+            if collection_type == CollectionType.physical and UsageType.collection_physical not in usage.usage_types:
                 raise ValueError("Usage can not be applied to physical collection")
-            if collection == Collection.logical and UsageType.collection_logical not in usage.usage_types:
+            if collection_type == CollectionType.logical and UsageType.collection_logical not in usage.usage_types:
                 raise ValueError("Usage can not be applied to logical collection")
-            if collection == Collection.named_array and UsageType.collection_named_array not in usage.usage_types:
+            if collection_type == CollectionType.named_array and UsageType.collection_named_array not in usage.usage_types:
                 raise ValueError("Usage can not be applied to named array collection")
-            if collection == Collection.usage_switch and UsageType.collection_usage_switch not in usage.usage_types:
+            if collection_type == CollectionType.usage_switch and UsageType.collection_usage_switch not in usage.usage_types:
                 raise ValueError("Usage can not be applied to usage switch collection")
-            if collection == Collection.usage_modifier and UsageType.collection_usage_modifier not in usage.usage_types:
+            if collection_type == CollectionType.usage_modifier and UsageType.collection_usage_modifier not in usage.usage_types:
                 raise ValueError("Usage can not be applied to usage modifier collection")
             self.usage = usage
 
@@ -139,18 +140,20 @@ class DescriptorBuilder:
         self._usage_page = usage_page
         self._usages.clear()
 
-    def push_collection(self, collection: Collection):
+    def push_collection(self, collection: CollectionType):
         collection_element = _CollectionElement(collection, self._usages.pop(0), self._current_collection)
         self._current_collection.children.append(collection_element)
         self._current_collection = collection_element
+
+        self._usages.clear()
         return self
 
     def pop_collection(self):
         if self._current_collection.parent is None:
             raise RuntimeError("Can not pop collection state")
         self._current_collection = self._current_collection.parent
-        if self._current_collection.parent is self._collection:
-            self._usages.clear()
+
+        self._usages.clear()
         return self
 
     def push(self):

@@ -1,5 +1,5 @@
 from hidparser.Item import ItemType, Item
-from hidparser.enums import Collection, ReportFlags, ReportType
+from hidparser.enums import CollectionType, ReportFlags, ReportType
 from hidparser.DescriptorBuilder import DescriptorBuilder
 
 
@@ -84,7 +84,7 @@ class CollectionItem(Item):
         return ItemType.main
 
     def visit(self, descriptor: DescriptorBuilder):
-        if not isinstance(self.collection, Collection):
+        if not isinstance(self.collection, CollectionType):
             raise ValueError("CollectionItem does not have a valid collection set")
         descriptor.push_collection(self.collection)
 
@@ -93,7 +93,7 @@ class CollectionItem(Item):
 
         if self.data is None or len(self.data) is not 1:
             raise ValueError("Collection must contain one byte of data")
-        self.collection = Collection(self.data[0])
+        self.collection = CollectionType(self.data[0])
 
     def __repr__(self):
         return "<{}: {}>".format(self.__class__.__name__, self.collection)

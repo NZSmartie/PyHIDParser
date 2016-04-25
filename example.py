@@ -1,5 +1,5 @@
 import hidparser
-from hidparser import DescriptorBuilder, Collection, ReportType, ReportFlags
+from hidparser import DescriptorBuilder, CollectionType, ReportType, ReportFlags
 from hidparser.UsagePage import GenericDesktop, Button
 
 from array import array
@@ -41,9 +41,9 @@ if __name__ is '__main__':
     # Create a mouse descriptor through API
     mouse_builder = DescriptorBuilder()
     mouse_builder.add_usage(GenericDesktop.mouse)
-    mouse_builder.push_collection(Collection.application)
+    mouse_builder.push_collection(CollectionType.application)
     mouse_builder.add_usage(GenericDesktop.pointer)
-    mouse_builder.push_collection(Collection.physical)
+    mouse_builder.push_collection(CollectionType.physical)
     mouse_builder.set_usage_range(Button(1), Button(3))
     mouse_builder.set_logical_range(0,1)
     mouse_builder.report_count = 3
