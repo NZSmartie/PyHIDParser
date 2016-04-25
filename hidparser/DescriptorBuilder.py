@@ -22,10 +22,26 @@ class ReportGroup:
 
 
 class _CollectionElement:
-    def __init__(self, collection: Collection = None, parent = None):
+    def __init__(self, collection: Collection = None, usage: Usage = None, parent = None):
         self.collection = collection
         self.parent = parent
         self.children = []
+        if parent is not None:
+            if usage is None:
+                raise ValueError("Collection item must have a usage")
+            if collection == Collection.application and UsageType.collection_application not in usage.usage_types:
+                raise ValueError("Usage can not be applied to application collection")
+            if collection == Collection.physical and UsageType.collection_physical not in usage.usage_types:
+                raise ValueError("Usage can not be applied to physical collection")
+            if collection == Collection.logical and UsageType.collection_logical not in usage.usage_types:
+                raise ValueError("Usage can not be applied to logical collection")
+            if collection == Collection.named_array and UsageType.collection_named_array not in usage.usage_types:
+                raise ValueError("Usage can not be applied to named array collection")
+            if collection == Collection.usage_switch and UsageType.collection_usage_switch not in usage.usage_types:
+                raise ValueError("Usage can not be applied to usage switch collection")
+            if collection == Collection.usage_modifier and UsageType.collection_usage_modifier not in usage.usage_types:
+                raise ValueError("Usage can not be applied to usage modifier collection")
+            self.usage = usage
 
 
 class DescriptorBuilder:
@@ -97,7 +113,7 @@ class DescriptorBuilder:
         self._usages.clear()
 
     def push_collection(self, collection: Collection):
-        collection_element = _CollectionElement(collection, self._current_collection)
+        collection_element = _CollectionElement(collection, self._usages.pop(0), self._current_collection)
         self._current_collection.children.append(collection_element)
         self._current_collection = collection_element
         return self

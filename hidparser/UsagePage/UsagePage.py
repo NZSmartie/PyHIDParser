@@ -27,6 +27,36 @@ class UsageType(_Enum):
         obj._value_ = value
         return obj
 
+    @classmethod
+    def control_usage_types(cls):
+        return [
+            UsageType.control_linear,
+            UsageType.control_on_off,
+            UsageType.control_momentary,
+            UsageType.control_one_shot,
+            UsageType.control_re_trigger,
+        ]
+
+    @classmethod
+    def data_usage_types(cls):
+        return [
+            UsageType.data_selector,
+            UsageType.data_static_value,
+            UsageType.data_static_flag,
+            UsageType.data_dynamic_value,
+            UsageType.data_dynamic_flag,
+        ]
+
+    @classmethod
+    def collection_usage_types(cls):
+        return [
+            UsageType.collection_named_array,
+            UsageType.collection_application,
+            UsageType.collection_logical,
+            UsageType.collection_physical,
+            UsageType.collection_usage_switch,
+            UsageType.collection_usage_modifier
+        ]
 
 class Usage:
     def __init__(self, value, usage_types):
