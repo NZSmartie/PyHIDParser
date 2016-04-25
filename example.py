@@ -32,10 +32,5 @@ mouse = array('B', [
     ])
 
 if __name__ is '__main__':
-    items = hidparser.parse(mouse)
-
-    descriptor_builder = hidparser.DescriptorBuilder()
-    for item in items:
-        print(item)
-        item.visit(descriptor_builder)
+    descriptor = hidparser.parse(mouse)
     pass

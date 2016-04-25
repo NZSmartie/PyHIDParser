@@ -7,6 +7,17 @@ from hidparser.DescriptorBuilder import DescriptorBuilder
 
 
 def parse(data):
+    items = get_items(data)
+
+    descriptor_builder = DescriptorBuilder()
+    for item in items:
+        print(item)
+        item.visit(descriptor_builder)
+
+    return descriptor_builder
+
+
+def get_items(data):
     import array
 
     if isinstance(data, bytes):
