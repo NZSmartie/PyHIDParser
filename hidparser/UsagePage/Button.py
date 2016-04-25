@@ -13,5 +13,14 @@ class Button(UsagePage):
         self.index = self.value.value
 
     @classmethod
+    def get_usage(cls, value):
+        return Usage(value, [
+            UsageType.data_selector,
+            UsageType.control_on_off,
+            UsageType.control_momentary,
+            UsageType.control_one_shot
+        ])
+
+    @classmethod
     def _get_usage_page_index(cls):
         return 0x09

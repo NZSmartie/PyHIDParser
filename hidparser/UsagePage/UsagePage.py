@@ -60,6 +60,16 @@ class UsagePage:
         raise ValueError("{} is not a valid {}".format(item.__name__, self.__class__.__name__))
 
     @classmethod
+    def get_usage(cls, value):
+        for attr in cls.__dict__:
+            member = cls.__dict__[attr]  # type: Usage
+            if not isinstance(member, Usage):
+                continue
+            if member.value == value:
+                return member
+        raise ValueError("{} is not a valid {}".format(value, cls.__name__))
+
+    @classmethod
     def _get_usage_page_index(cls):
         raise NotImplementedError()
 
@@ -85,4 +95,4 @@ class UsageRange:
             raise ValueError("Usage Minimum and Usage Maximum must be set")
         if self.minimum & ~0xFFFF:
             self.usage_page = UsagePage.find_usage_page((self.minimum & ~0xFFFF) >> 16)
-        return [self.usage_page(value) for value in range(self.minimum & 0xFFFF, (self.maximum & 0xFFFF) + 1)]
+        return [self.usage_page.get_usage(value) for value in range(self.minimum & 0xFFFF, (self.maximum & 0xFFFF) + 1)]

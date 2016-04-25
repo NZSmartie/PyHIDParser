@@ -90,7 +90,7 @@ class DescriptorBuilder:
             self._usages.append(usage)
         else:
             usage_page = self._usage_page if (usage & ~0xFFFF) == 0 else UsagePage.find_usage_page((usage & ~0xFFFF) >> 16)
-            self._usages.append(usage_page(usage & 0xFFFF))
+            self._usages.append(usage_page.get_usage(usage & 0xFFFF))
 
     def set_usage_page(self, usage_page: UsagePage.__class__):
         self._usage_page = usage_page
