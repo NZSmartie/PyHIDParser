@@ -57,23 +57,22 @@ class ReportGroup:
         self.features = []
 
 
-class DeviceCollection:
-    pass
-
-
 class Device:
     def __init__(self):
-        self.applications = {}
+        self._reports = {}
 
-    def add_application(self, usage_page: UsagePage):
-        if UsageType.collection_application not in usage_page.usage_types:
-            raise ValueError("Usage not a application collection type")
-        self.applications[usage_page] = DeviceCollection()
+    def __getitem__(self, item):
+        if type(item) is not int:
+            raise ValueError()
+        try:
+            return self._reports[item]
+        except KeyError:
+            self._reports[item] = ReportGroup()
 
-    def __getitem__(self, item: UsagePage):
-        if not isinstance(item, UsagePage) or UsageType.collection_application not in item.usage_types:
-            raise ValueError("item is not a Usage or of type application collection")
-        return self.applications[item]
+    def __setitem__(self, key, value):
+        if type(key) is not int or not isinstance(value, ReportGroup):
+            raise ValueError()
+        self._reports[key] = value
 
     def __iter__(self):
-        return iter(self.applications)
+        return iter(self._reports)
