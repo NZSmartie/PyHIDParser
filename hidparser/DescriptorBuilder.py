@@ -1,35 +1,10 @@
 import copy as _copy
 from hidparser.enums import CollectionType, ReportFlags, EnumMask, ReportType
 from hidparser.UsagePage.UsagePage import UsagePage, Usage, UsageType, UsageRange
+from hidparser.Device import Device, Report, ReportGroup
+from hidparser.helper import ValueRange
 
 from typing import Union, List
-
-
-class ValueRange:
-    def __init__(self, minimum=None, maximum=None):
-        self.minimum = minimum
-        self.maximum = maximum
-
-    def __repr__(self):
-        return "<{}: minimum: {}, maximum: {}>".format(self.__class__.__name__, self.minimum, self.maximum)
-
-
-class Report:
-    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None):
-        self.size = size
-        self.count = count
-        self.logical_range = logical_range
-        self.physical_range = physical_range
-        self.usages = usages
-        self.usage_switches = []
-        self.usage_modifiers = []
-
-
-class ReportGroup:
-    def __init__(self):
-        self.inputs = []
-        self.outputs = []
-        self.features = []
 
 
 class _CollectionElement:
@@ -53,6 +28,8 @@ class _CollectionElement:
             if collection_type == CollectionType.usage_modifier and UsageType.collection_usage_modifier not in usage.usage_types:
                 raise ValueError("Usage can not be applied to usage modifier collection")
             self.usage = usage
+            self.usage_switches = []
+            self.usage_modifiers = []
 
 
 class DescriptorBuilder:
@@ -168,3 +145,10 @@ class DescriptorBuilder:
             state = self._state_stack.pop()
             self.__dict__.update(state)
         return self
+
+    def build(self):
+        device = Device()
+        for application in self._collection.children:
+            device.add_application(application.usage)
+
+        return device

@@ -37,6 +37,7 @@ if __name__ is '__main__':
     # Todo return a Descriptor object instead of a builder
     # This actually returns a DescriptorBuilder
     descriptor = hidparser.parse(mouse)
+    mouse_device = descriptor.build()
 
     # Create a mouse descriptor through API
     mouse_builder = DescriptorBuilder()
