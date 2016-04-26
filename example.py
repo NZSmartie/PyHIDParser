@@ -1,5 +1,5 @@
 import hidparser
-from hidparser import DescriptorBuilder, CollectionType, ReportType, ReportFlags, Device, Report
+from hidparser import Device, Report, ReportFlags
 from hidparser.UsagePage import GenericDesktop, Button, UsageRange
 
 from array import array
@@ -36,13 +36,16 @@ mouse = array('B', [
     ])
 
 if __name__ is '__main__':
-    # Todo return a Device object instead of a builder
-    # This actually returns a DescriptorBuilder
+    # Todo return a more useful Device object instead of a "builder"
+    # This returns a DescriptorBuilder
     descriptor = hidparser.parse(mouse)
 
-    # Create a mouse device through API
+    # Create a mouse device through API instead of parsing bytes
     mouse_device = Device()
+
     # TODO accessing the collections by Usage could be cleaned up some how
+    # Index 0 is used as a fallback when no ReportID Items are used
+    # otherwise, Report ID must start at 1
     mouse_device[0].inputs.append(GenericDesktop.mouse)
     mouse_device[0].inputs[GenericDesktop.mouse].append(GenericDesktop.pointer)
     mouse_device[0].inputs[GenericDesktop.mouse][GenericDesktop.pointer].extend([
