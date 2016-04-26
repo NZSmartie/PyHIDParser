@@ -41,7 +41,7 @@ class OutputItem(Item):
         return ItemType.main
 
     def __init__(self, **kwargs):
-        super(InputItem, self).__init__(**kwargs)
+        super(OutputItem, self).__init__(**kwargs)
 
         self.flags = ReportFlags.from_bytes(self.data)
 
@@ -64,7 +64,7 @@ class FeatureItem(Item):
         return ItemType.main
 
     def __init__(self, **kwargs):
-        super(InputItem, self).__init__(**kwargs)
+        super(FeatureItem, self).__init__(**kwargs)
 
         self.flags = ReportFlags.from_bytes(self.data)
 
