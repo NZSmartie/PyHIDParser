@@ -1,9 +1,10 @@
 # PyHIDParser
+#### V0.0.2
 
 A python library for interpreting a HID descriptor to provide
 an application with byte structures for reading and writing to without the manual labour.
 
-## Pre-Alpha
+#### Pre-Alpha
 
 At this stage, this library is still in early development and adoption is not recommended.
 
@@ -12,11 +13,11 @@ At this stage, this library is still in early development and adoption is not re
   - [x] Parse HID descriptor from byte array
   - [ ] Support for HID spec 1.11 items
     - [x] Main items (Collections, Inputs, Outputs and Features)
-    - [ ] Global items
-    - [ ] Local items
-    - [ ] Support vender defined long items - ***low priority***
+    - [ ] Global items *(missing `unit` and `unit exponent`)*
+    - [ ] Local items *(missing `designator index/maximum/minimum`, `string index/maximum/minimum` and  delimiter`)*
+    - [ ] ~~Support vender defined long items~~ *(not going to happen any time soon)*
   - [ ] Create an application API for handing HID items - *Don't want the application developer to deal with states, nesting or closing collections, etc*
-    - [ ] Find reports based on usages
+    - [ ] Access reports based on usages
     - [ ] Serialise/Deserialise reports to/from the HID device
     - [ ] Allow creating a HID descriptor from the API for configuring devices with
 
