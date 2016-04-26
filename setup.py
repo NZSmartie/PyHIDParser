@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="hidparser",
-    version="0.0.1",
+    version="0.0.2",
     description="HID Descriptor Parser",
 
     license="MIT",
@@ -38,5 +38,9 @@ setup(
 
     keywords="hid device usb parse descriptor",
 
-    packages=["hidparser"]
+    packages=["hidparser"],
+
+    install_requires=[
+        "bitstring>=3.1.4"
+    ]
 )
