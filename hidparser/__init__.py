@@ -4,6 +4,7 @@ from hidparser.ItemGlobal import *
 from hidparser.ItemLocal import *
 
 from hidparser.DescriptorBuilder import DescriptorBuilder
+from hidparser.Device import Device, Collection, ReportGroup, Report
 
 
 def parse(data):

@@ -1,7 +1,7 @@
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
-from typing import List
+from typing import List, Iterator
 from copy import copy as _copy
 from bitstring import BitArray as _BitArray
 
@@ -50,18 +50,71 @@ class Report:
             self._values[i] = self.logical_range.scale_to(self.physical_range, values[i:i + self.size])
 
 
+class Collection:
+    def __init__(self, usage = None, allowed_usage_types = None):
+        if allowed_usage_types is None:
+            allowed_usage_types = UsageType.collection_usage_types()
+        if isinstance(allowed_usage_types, UsageType):
+            allowed_usage_types = (allowed_usage_types,)
+        elif type(allowed_usage_types) not in (list, tuple):
+            raise ValueError("usage types must be a UsageType or a list or tuple of UsageType")
+
+        self._usage_types = allowed_usage_types
+        self._usage = usage
+        self.items = []
+
+    def append(self, usage):
+        if not isinstance(usage, UsagePage):
+            raise ValueError("usage is not of UsagePage")
+        if not [usage_type for usage_type in usage.usage_types if usage_type in self._usage_types]:
+            raise ValueError()
+        self.items.append(Collection(usage))
+
+    def extend(self, items):
+        pass
+
+    def __getitem__(self, usage) -> "Collection":
+        if not isinstance(usage, UsagePage):
+            raise ValueError("usage is not of UsagePage")
+        if not [usage_type for usage_type in usage.usage_types if usage_type in self._usage_types]:
+            raise ValueError()
+        return self.items[usage]
+
+    def __iter__(self):
+        return iter(self.items)
+
+    def __cmp__(self, other):
+        if other is None:
+            return False
+        if not isinstance(other, UsagePage):
+            return super(Collection, self).__cmp__(other)
+        return self._usage is other
+
+
 class ReportGroup:
     def __init__(self):
-        self.inputs = []
-        self.outputs = []
-        self.features = []
+        self._inputs = Collection(allowed_usage_types=(UsageType.collection_application,))
+        self._outputs = Collection(allowed_usage_types=(UsageType.collection_application,))
+        self._features = Collection(allowed_usage_types=(UsageType.collection_application,))
+
+    @property
+    def inputs(self) -> Collection:
+        return self._inputs
+
+    @property
+    def outputs(self) -> Collection:
+        return self._outputs
+
+    @property
+    def features(self) -> Collection:
+        return self._features
 
 
 class Device:
     def __init__(self):
         self._reports = {}
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> ReportGroup:
         if type(item) is not int:
             raise ValueError()
         try:
@@ -69,10 +122,5 @@ class Device:
         except KeyError:
             self._reports[item] = ReportGroup()
 
-    def __setitem__(self, key, value):
-        if type(key) is not int or not isinstance(value, ReportGroup):
-            raise ValueError()
-        self._reports[key] = value
-
-    def __iter__(self):
+    def __iter__(self) -> Iterator(ReportGroup):
         return iter(self._reports)

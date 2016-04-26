@@ -51,7 +51,7 @@ class UsageType(_Enum):
     def collection_usage_types(cls):
         return (
             UsageType.collection_named_array,
-            UsageType.collection_application,
+            # UsageType.collection_application, # Commented out as it is used for top level collections only
             UsageType.collection_logical,
             UsageType.collection_physical,
             UsageType.collection_usage_switch,
@@ -105,10 +105,10 @@ class UsagePage(_Enum):
 
 
 class UsageRange:
-    def __init__(self, usage_page: UsagePage.__class__):
+    def __init__(self, usage_page: UsagePage.__class__ = None, minimum = None, maximum = None):
         self.usage_page = usage_page
-        self.minimum = None
-        self.maximum = None
+        self.minimum = minimum
+        self.maximum = maximum
 
     def get_range(self):
         if self.minimum is None or self.maximum is None:
