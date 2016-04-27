@@ -60,6 +60,12 @@ if __name__ is '__main__':
             flags=ReportFlags.variable
         ),
         Report(
+            usages=[],
+            size=5,
+            count=1,
+            flags=ReportFlags.constant | ReportFlags.variable
+        ),
+        Report(
             usages=[
                 GenericDesktop.x,
                 GenericDesktop.y
