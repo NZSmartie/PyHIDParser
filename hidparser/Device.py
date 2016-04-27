@@ -7,13 +7,13 @@ from bitstring import BitArray as _BitArray
 
 
 class Report:
-    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None):
+    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None, flags = None):
         self.size = size
         self.count = count
         self.logical_range = logical_range if logical_range is not None else ValueRange() # type: ValueRange
         self.physical_range = physical_range if physical_range is not None else _copy(self.logical_range) # type: ValueRange
         self.usages = usages
-
+        self.flags = flags
         self._values = [0]*self.count if self.count>0 else 0
 
     @property
@@ -62,23 +62,31 @@ class Collection:
         self._usage_types = allowed_usage_types
         self._usage = usage
         self.items = []
+        self._attrs = {}
 
-    def append(self, usage):
-        if not isinstance(usage, UsagePage):
-            raise ValueError("usage is not of UsagePage")
-        if not [usage_type for usage_type in usage.usage_types if usage_type in self._usage_types]:
-            raise ValueError()
-        self.items.append(Collection(usage))
+    def append(self, item):
+        if isinstance(item, UsagePage):
+            if not [usage_type for usage_type in item.usage_types if usage_type in self._usage_types]:
+                raise ValueError()
+            collection = Collection(item)
+            self.items.append(collection)
+            self._attrs[item._name_] = collection
+        elif isinstance(item, Report):
+            self.items.append(item)
+        else:
+            raise ValueError("usage type is not UsagePage or Report")
 
     def extend(self, items):
-        pass
+        for item in items:
+            self.append(item)
 
-    def __getitem__(self, usage) -> "Collection":
-        if not isinstance(usage, UsagePage):
-            raise ValueError("usage is not of UsagePage")
-        if not [usage_type for usage_type in usage.usage_types if usage_type in self._usage_types]:
-            raise ValueError()
-        return self.items[usage]
+    def __getitem__(self, item) -> "Collection":
+        return self.items[item]
+
+    def __getattr__(self, item) -> "Collection":
+        if item in self._attrs.keys():
+            return self._attrs[item]
+        raise AttributeError()
 
     def __iter__(self):
         return iter(self.items)
@@ -115,12 +123,9 @@ class Device:
         self._reports = {}
 
     def __getitem__(self, item) -> ReportGroup:
-        if type(item) is not int:
-            raise ValueError()
-        try:
-            return self._reports[item]
-        except KeyError:
+        if item not in self._reports:
             self._reports[item] = ReportGroup()
+        return self._reports[item]
 
     def __iter__(self) -> Iterator(ReportGroup):
         return iter(self._reports)

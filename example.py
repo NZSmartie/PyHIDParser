@@ -47,8 +47,8 @@ if __name__ is '__main__':
     # Index 0 is used as a fallback when no ReportID Items are used
     # otherwise, Report ID must start at 1
     mouse_device[0].inputs.append(GenericDesktop.mouse)
-    mouse_device[0].inputs[GenericDesktop.mouse].append(GenericDesktop.pointer)
-    mouse_device[0].inputs[GenericDesktop.mouse][GenericDesktop.pointer].extend([
+    mouse_device[0].inputs.mouse.append(GenericDesktop.pointer)
+    mouse_device[0].inputs.mouse.pointer.extend([
         Report(
             usages=UsageRange(
                 minimum=Button(1),
@@ -56,8 +56,8 @@ if __name__ is '__main__':
             ).get_range(),
             size=1,
             count=3,
-            logical_range=ValueRange(0, 1)
-            # flags=ReportFlags.variable
+            logical_range=ValueRange(0, 1),
+            flags=ReportFlags.variable
         ),
         Report(
             usages=[
@@ -66,8 +66,8 @@ if __name__ is '__main__':
             ],
             size=8,
             count=2,
-            logical_range=ValueRange(-127, 127)
-            # flags=ReportFlags.variable | ReportFlags.relative
+            logical_range=ValueRange(-127, 127),
+            flags=ReportFlags.variable | ReportFlags.relative
         )
     ])
     pass
