@@ -1,10 +1,10 @@
 import hidparser
 from hidparser import Device, Report, ReportFlags
 from hidparser.UsagePage import GenericDesktop, Button, UsageRange
+from hidparser.helper import ValueRange
 
 from array import array
 
-from hidparser.helper import ValueRange
 
 mouse = array('B', [
     0x05, 0x01,  # USAGE_PAGE (Generic Desktop)
