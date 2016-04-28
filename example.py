@@ -76,4 +76,14 @@ if __name__ is '__main__':
             flags=ReportFlags.variable | ReportFlags.relative
         )
     ])
+
+    # TODO Read from device and deserialize with mouse_device. Something like:
+    # mouse_device.deserialize(bytes([0x00, 0x12, 0x34]))
+
+    # Read x,y from mouse
+    pointer = mouse_device[0].inputs.mouse.pointer
+    print("pointer: {}, {}".format(pointer.x, pointer.y))
+
+    # TODO Create an example device with outputs and features
+
     pass
