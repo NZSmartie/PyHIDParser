@@ -1,3 +1,4 @@
+from hidparser.enums import CollectionType
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
@@ -60,7 +61,7 @@ class Report:
 
 
 class Collection:
-    def __init__(self, usage = None, allowed_usage_types = None):
+    def __init__(self, usage=None, allowed_usage_types=None, collection_type: CollectionType=None):
         if allowed_usage_types is None:
             allowed_usage_types = UsageType.collection_usage_types()
         if isinstance(allowed_usage_types, UsageType):
@@ -68,13 +69,17 @@ class Collection:
         elif type(allowed_usage_types) not in (list, tuple):
             raise ValueError("usage types must be a UsageType or a list or tuple of UsageType")
 
+        self.collection_type = collection_type
         self._usage_types = allowed_usage_types
         self._usage = usage
         self.items = []
         self._attrs = {}
 
     def append(self, item):
-        if isinstance(item, UsagePage):
+        if isinstance(item, Collection):
+            self.items.append(item)
+            self._attrs[item._usage._name_] = item
+        elif isinstance(item, UsagePage):
             if not [usage_type for usage_type in item.usage_types if usage_type in self._usage_types]:
                 raise ValueError()
             collection = Collection(item)
@@ -107,7 +112,6 @@ class Collection:
         except KeyError:
             raise AttributeError()
 
-
     def __iter__(self):
         return iter(self.items)
 
@@ -139,8 +143,8 @@ class ReportGroup:
 
 
 class Device:
-    def __init__(self):
-        self._reports = {}
+    def __init__(self, reports=None):
+        self._reports = reports if reports is not None else {}
 
     def __getitem__(self, item) -> ReportGroup:
         if item not in self._reports:

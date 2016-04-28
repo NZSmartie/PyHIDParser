@@ -3,19 +3,19 @@ from hidparser.ItemMain import *
 from hidparser.ItemGlobal import *
 from hidparser.ItemLocal import *
 
-from hidparser.DescriptorBuilder import DescriptorBuilder
+from hidparser.DeviceBuilder import DeviceBuilder
 from hidparser.Device import Device, Collection, ReportGroup, Report
 
 
 def parse(data):
     items = get_items(data)
 
-    descriptor_builder = DescriptorBuilder()
+    descriptor_builder = DeviceBuilder()
     for item in items:
         print(item)
         item.visit(descriptor_builder)
 
-    return descriptor_builder
+    return Device(reports=descriptor_builder.reports)
 
 
 def get_items(data):

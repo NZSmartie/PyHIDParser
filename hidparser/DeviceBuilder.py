@@ -1,38 +1,19 @@
 import copy as _copy
 from hidparser.enums import CollectionType, ReportFlags, EnumMask, ReportType
 from hidparser.UsagePage.UsagePage import UsagePage, Usage, UsageType, UsageRange
-from hidparser.Device import Device, Report, ReportGroup
+from hidparser.Device import Device, Report, ReportGroup, Collection
 from hidparser.helper import ValueRange
 
-from typing import Union, List
+from typing import Union as _Union
 
 
-class _CollectionElement:
-    def __init__(self, collection_type: CollectionType = None, usage: Usage = None, parent = None):
-        self.collection_type = collection_type
+class _Collection(Collection):
+    def __init__(self, parent=None, *args, **kwargs):
+        super(_Collection, self).__init__(*args, **kwargs)
         self.parent = parent
-        self.children = [] # type: List[_CollectionElement]
-        if parent is not None:
-            if usage is None:
-                raise ValueError("Collection item must have a usage")
-            if collection_type == CollectionType.application and UsageType.collection_application not in usage.usage_types:
-                raise ValueError("Usage can not be applied to application collection")
-            if collection_type == CollectionType.physical and UsageType.collection_physical not in usage.usage_types:
-                raise ValueError("Usage can not be applied to physical collection")
-            if collection_type == CollectionType.logical and UsageType.collection_logical not in usage.usage_types:
-                raise ValueError("Usage can not be applied to logical collection")
-            if collection_type == CollectionType.named_array and UsageType.collection_named_array not in usage.usage_types:
-                raise ValueError("Usage can not be applied to named array collection")
-            if collection_type == CollectionType.usage_switch and UsageType.collection_usage_switch not in usage.usage_types:
-                raise ValueError("Usage can not be applied to usage switch collection")
-            if collection_type == CollectionType.usage_modifier and UsageType.collection_usage_modifier not in usage.usage_types:
-                raise ValueError("Usage can not be applied to usage modifier collection")
-            self.usage = usage
-            self.usage_switches = []
-            self.usage_modifiers = []
 
 
-class DescriptorBuilder:
+class DeviceBuilder:
     def __init__(self):
         self._state_stack = []
         self._items = []
@@ -43,11 +24,10 @@ class DescriptorBuilder:
 
         self.report_size = 0
         self.report_count = 0
-
         self.logical_range = ValueRange()
-        self.physical_range = ValueRange()
+        self.physical_range = self.logical_range
 
-        self._collection = _CollectionElement()
+        self._collection = Collection(allowed_usage_types=(UsageType.collection_application,))
         self._current_collection = self._collection
 
     @property
@@ -58,7 +38,7 @@ class DescriptorBuilder:
     def reports(self):
         return self._reports
 
-    def add_report(self, report_type: ReportType, flags: Union[ReportFlags, EnumMask, int]):
+    def add_report(self, report_type: ReportType, flags: _Union[ReportFlags, EnumMask, int]):
         usages = []
         while len(usages) < self.report_count:
             usage = self._usages.pop(0) if len(self._usages) > 1 else self._usages[0]
@@ -67,16 +47,42 @@ class DescriptorBuilder:
         report = Report(usages, self.report_size, self.report_count, _copy.copy(self.logical_range), _copy.copy(self.physical_range))
 
         if report_type is ReportType.input:
-            self._report_group.inputs.append(report)
+            collection = self._report_group.inputs
         elif report_type is ReportType.output:
-            self._report_group.outputs.append(report)
+            collection = self._report_group.outputs
         elif report_type is ReportType.feature:
-            self._report_group.features.append(report)
+            collection = self._report_group.features
+
+        collection = self._build_collection_path(self._current_collection, collection)
+        collection.append(Report(
+            usages=usages,
+            size=self.report_size,
+            count=self.report_count,
+            logical_range=self.logical_range,
+            physical_range=self.physical_range,
+            flags=flags
+        ))
+
+    def _build_collection_path(self, source: _Collection, target:_Collection):
+        path = []
+        try:
+            while source.parent is not None:
+                path.append(source)
+                source = source.parent
+        except AttributeError:
+            pass
+        while len(path)>0:
+            node = path.pop()
+            try:
+                target = target.__getattr__(node._usage._name_)
+            except AttributeError:
+                target.append(node._usage)
+                target = target.__getattr__(node._usage._name_)
+        return target
 
     def set_report_id(self, report_id: int):
-        if report_id in self._reports.keys():
-            raise ValueError("Report ID already exists")
-        self._reports[report_id] = ReportGroup()
+        if report_id not in self._reports.keys():
+            self._reports[report_id] = ReportGroup()
         self._report_group = self._reports[report_id]
 
     def set_usage_range(self, minimum=None, maximum=None):
@@ -104,7 +110,7 @@ class DescriptorBuilder:
         if maximum is not None:
             self.physical_range.maximum = maximum
 
-    def add_usage(self, usage: Union[UsagePage, Usage, int]):
+    def add_usage(self, usage: _Union[UsagePage, Usage, int]):
         if isinstance(usage, Usage):
             self._usages.append(usage)
         elif isinstance(usage, UsagePage):
@@ -118,8 +124,12 @@ class DescriptorBuilder:
         self._usages.clear()
 
     def push_collection(self, collection: CollectionType):
-        collection_element = _CollectionElement(collection, self._usages.pop(0), self._current_collection)
-        self._current_collection.children.append(collection_element)
+        collection_element = _Collection(
+            usage=self._usages.pop(0),
+            parent=self._current_collection,
+            collection_type=collection
+        )
+        self._current_collection.append(collection_element)
         self._current_collection = collection_element
 
         self._usages.clear()
@@ -149,6 +159,6 @@ class DescriptorBuilder:
     def build(self):
         device = Device()
         for application in self._collection.children:
-            device.add_application(application.usage)
+            device.append(application.usage)
 
         return device

@@ -1,4 +1,4 @@
-from hidparser import DescriptorBuilder
+from hidparser import DeviceBuilder
 from hidparser.Item import ItemType, Item, ValueItem
 
 from hidparser.UsagePage import UsagePage
@@ -15,7 +15,7 @@ class UsagePageItem(ValueItem):
 
         self.usage_page = UsagePage.find_usage_page(self.value)
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_usage_page(UsagePage.find_usage_page(self.value))
 
     @classmethod
@@ -31,7 +31,7 @@ class UsagePageItem(ValueItem):
 
 
 class LogicalMinimumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_logical_range(minimum=self.value)
 
     @classmethod
@@ -44,7 +44,7 @@ class LogicalMinimumItem(ValueItem):
 
 
 class LogicalMaximumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_logical_range(maximum=self.value)
 
     @classmethod
@@ -57,7 +57,7 @@ class LogicalMaximumItem(ValueItem):
 
 
 class PhysicalMinimumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_physical_range(minimum=self.value)
 
     @classmethod
@@ -70,7 +70,7 @@ class PhysicalMinimumItem(ValueItem):
 
 
 class PhysicalMaximumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_physical_range(maximum=self.value)
 
     @classmethod
@@ -106,7 +106,7 @@ class UnitItem(Item):
 
 class ReportSizeItem(ValueItem):
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.report_size = self.value
 
     @classmethod
@@ -119,7 +119,7 @@ class ReportSizeItem(ValueItem):
 
 
 class ReportIdItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_report_id(self.value)
 
     @classmethod
@@ -133,7 +133,7 @@ class ReportIdItem(ValueItem):
 
 class ReportCountItem(ValueItem):
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.report_count = self.value
 
     @classmethod
@@ -146,7 +146,7 @@ class ReportCountItem(ValueItem):
 
 
 class PushItem(Item):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.push()
 
     @classmethod
@@ -159,7 +159,7 @@ class PushItem(Item):
 
 
 class PopItem(Item):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.pop()
 
     @classmethod

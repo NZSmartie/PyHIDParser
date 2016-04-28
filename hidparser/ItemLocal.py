@@ -1,10 +1,10 @@
-from hidparser.DescriptorBuilder import DescriptorBuilder
+from hidparser.DeviceBuilder import DeviceBuilder
 from hidparser.Item import Item, ItemType, ValueItem
 
 
 class UsageItem(ValueItem):
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.add_usage(self.value)
 
     @classmethod
@@ -17,7 +17,7 @@ class UsageItem(ValueItem):
 
 
 class UsageMinimumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_usage_range(minimum=self.value)
 
     @classmethod
@@ -30,7 +30,7 @@ class UsageMinimumItem(ValueItem):
 
 
 class UsageMaximumItem(ValueItem):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.set_usage_range(maximum=self.value)
 
     @classmethod

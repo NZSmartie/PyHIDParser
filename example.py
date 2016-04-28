@@ -37,18 +37,18 @@ mouse = array('B', [
 
 if __name__ is '__main__':
     # Todo return a more useful Device object instead of a "builder"
-    # This returns a DescriptorBuilder
-    descriptor = hidparser.parse(mouse)
+    # This returns a Device
+    mouse_from_desc = hidparser.parse(mouse)
 
     # Create a mouse device through API instead of parsing bytes
-    mouse_device = Device()
+    mouse_from_api = Device()
 
     # TODO accessing the collections by Usage could be cleaned up some how
     # Index 0 is used as a fallback when no ReportID Items are used
     # otherwise, Report ID must start at 1
-    mouse_device[0].inputs.append(GenericDesktop.mouse)
-    mouse_device[0].inputs.mouse.append(GenericDesktop.pointer)
-    mouse_device[0].inputs.mouse.pointer.extend([
+    mouse_from_api[0].inputs.append(GenericDesktop.mouse)
+    mouse_from_api[0].inputs.mouse.append(GenericDesktop.pointer)
+    mouse_from_api[0].inputs.mouse.pointer.extend([
         Report(
             usages=UsageRange(
                 minimum=Button(1),
@@ -81,7 +81,7 @@ if __name__ is '__main__':
     # mouse_device.deserialize(bytes([0x00, 0x12, 0x34]))
 
     # Read x,y from mouse
-    pointer = mouse_device[0].inputs.mouse.pointer
+    pointer = mouse_from_api[0].inputs.mouse.pointer
     print("pointer: {}, {}".format(pointer.x, pointer.y))
 
     # TODO Create an example device with outputs and features

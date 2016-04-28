@@ -1,12 +1,12 @@
 from hidparser.Item import ItemType, Item
 from hidparser.enums import CollectionType, ReportFlags, ReportType
-from hidparser.DescriptorBuilder import DescriptorBuilder
+from hidparser.DeviceBuilder import DeviceBuilder
 
 
 class InputItem(Item):
     flags = None # type: ReportFlags
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.add_report(ReportType.input, self.flags)
 
     @classmethod
@@ -29,7 +29,7 @@ class InputItem(Item):
 class OutputItem(Item):
     flags = None
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.add_report(ReportType.output, self.flags)
 
     @classmethod
@@ -52,7 +52,7 @@ class OutputItem(Item):
 class FeatureItem(Item):
     flags = None
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.add_report(ReportType.feature, self.flags)
 
     @classmethod
@@ -83,7 +83,7 @@ class CollectionItem(Item):
     def _get_type(cls):
         return ItemType.main
 
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         if not isinstance(self.collection, CollectionType):
             raise ValueError("CollectionItem does not have a valid collection set")
         descriptor.push_collection(self.collection)
@@ -100,7 +100,7 @@ class CollectionItem(Item):
 
 
 class EndCollectionItem(Item):
-    def visit(self, descriptor: DescriptorBuilder):
+    def visit(self, descriptor: DeviceBuilder):
         descriptor.pop_collection()
 
     @classmethod
