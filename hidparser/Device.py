@@ -3,6 +3,7 @@ from hidparser.helper import ValueRange
 
 from typing import List, Iterator
 from copy import copy as _copy
+from functools import partial as _partial
 from bitstring import BitArray as _BitArray
 
 
@@ -12,7 +13,9 @@ class Report:
         self.count = count
         self.logical_range = logical_range if logical_range is not None else ValueRange() # type: ValueRange
         self.physical_range = physical_range if physical_range is not None else _copy(self.logical_range) # type: ValueRange
+        # TODO ensure usages is a list/tuple, otherwise, wrap it
         self.usages = usages
+        # TODO make use of flags
         self.flags = flags
         self._values = [0]*self.count if self.count>0 else 0
 
@@ -37,6 +40,12 @@ class Report:
             if not self.physical_range.in_range(value):
                 raise ValueRange("{} is not within physical range".format(value))
             self._values[0] = value
+
+    def __getitem__(self, key):
+        return self._values[key]
+
+    def __setitem__(self, key, value):
+        self._values[key] = value
 
     def pack(self):
         values = _BitArray(self.count*self.size)
@@ -72,6 +81,12 @@ class Collection:
             self.items.append(collection)
             self._attrs[item._name_] = collection
         elif isinstance(item, Report):
+            if len(item.usages)>0:
+                for usage in item.usages:
+                    self._attrs[usage._name_] = property(
+                        fget=_partial(item.__getitem__, item.usages.index(usage)),
+                        fset=_partial(item.__setitem__, item.usages.index(usage))
+                    )
             self.items.append(item)
         else:
             raise ValueError("usage type is not UsagePage or Report")
@@ -84,9 +99,14 @@ class Collection:
         return self.items[item]
 
     def __getattr__(self, item) -> "Collection":
-        if item in self._attrs.keys():
-            return self._attrs[item]
-        raise AttributeError()
+        try:
+            value = self._attrs[item]
+            if isinstance(value, property):
+                return value.fget()
+            return value
+        except KeyError:
+            raise AttributeError()
+
 
     def __iter__(self):
         return iter(self.items)
