@@ -1,4 +1,4 @@
-from hidparser.UsagePage.UsagePage import UsagePage, UsageType, Usage
+from hidparser.UsagePage import UsagePage, UsageType, Usage
 
 
 class GenericDesktop(UsagePage):

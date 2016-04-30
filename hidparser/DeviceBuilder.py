@@ -1,6 +1,6 @@
 import copy as _copy
 from hidparser.enums import CollectionType, ReportFlags, EnumMask, ReportType
-from hidparser.UsagePage.UsagePage import UsagePage, Usage, UsageType, UsageRange
+from hidparser.UsagePage import UsagePage, Usage, UsageType, UsageRange
 from hidparser.Device import Device, Report, ReportGroup, Collection
 from hidparser.helper import ValueRange
 

@@ -6,6 +6,8 @@ from hidparser.ItemLocal import *
 from hidparser.DeviceBuilder import DeviceBuilder
 from hidparser.Device import Device, Collection, ReportGroup, Report
 
+from hidparser.UsagePage import UsagePage, Usage, UsageRange, UsageType
+import hidparser.UsagePages as UsagePages
 
 def parse(data):
     items = get_items(data)

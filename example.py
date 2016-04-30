@@ -1,8 +1,5 @@
 import hidparser
-from hidparser import Device, Report, ReportFlags
-from hidparser.UsagePage import GenericDesktop, Button, UsageRange
-from hidparser.helper import ValueRange
-
+from hidparser.UsagePages import GenericDesktop, Button
 from array import array
 
 
@@ -40,8 +37,8 @@ if __name__ is '__main__':
     # This returns a Device
     mouse_from_desc = hidparser.parse(mouse)
 
-    # Create a mouse device through API instead of parsing bytes
-    mouse_from_api = Device()
+    # Alternatively, create a mouse device through API instead of parsing bytes
+    mouse_from_api = hidparser.Device()
 
     # TODO accessing the collections by Usage could be cleaned up some how
     # Index 0 is used as a fallback when no ReportID Items are used
@@ -49,31 +46,31 @@ if __name__ is '__main__':
     mouse_from_api[0].inputs.append(GenericDesktop.mouse)
     mouse_from_api[0].inputs.mouse.append(GenericDesktop.pointer)
     mouse_from_api[0].inputs.mouse.pointer.extend([
-        Report(
-            usages=UsageRange(
+        hidparser.Report(
+            usages=hidparser.UsageRange(
                 minimum=Button(1),
                 maximum=Button(3)
             ).get_range(),
             size=1,
             count=3,
-            logical_range=ValueRange(0, 1),
-            flags=ReportFlags.variable
+            logical_range=(0, 1),
+            flags=hidparser.ReportFlags.variable
         ),
-        Report(
+        hidparser.Report(
             usages=[],
             size=5,
             count=1,
-            flags=ReportFlags.constant | ReportFlags.variable
+            flags=hidparser.ReportFlags.constant | hidparser.ReportFlags.variable
         ),
-        Report(
+        hidparser.Report(
             usages=[
-                GenericDesktop.x,
-                GenericDesktop.y
+                hidparser.UsagePages.GenericDesktop.x,
+                hidparser.UsagePages.GenericDesktop.y
             ],
             size=8,
             count=2,
-            logical_range=ValueRange(-127, 127),
-            flags=ReportFlags.variable | ReportFlags.relative
+            logical_range=(-127, 127),
+            flags=hidparser.ReportFlags.variable | hidparser.ReportFlags.relative
         )
     ])
 

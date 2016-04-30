@@ -12,6 +12,10 @@ class Report:
     def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None, flags = None):
         self.size = size
         self.count = count
+        if type(logical_range) in (list, tuple):
+            logical_range = ValueRange(*logical_range)
+        if type(physical_range) in (list, tuple):
+            physical_range = ValueRange(*physical_range)
         self.logical_range = logical_range if logical_range is not None else ValueRange() # type: ValueRange
         self.physical_range = physical_range if physical_range is not None else _copy(self.logical_range) # type: ValueRange
         # TODO ensure usages is a list/tuple, otherwise, wrap it
