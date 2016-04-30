@@ -2,24 +2,24 @@ from enum import Enum as _Enum
 
 
 class UsageType(_Enum):
-    control_linear = ()
-    control_on_off = ()
-    control_momentary = ()
-    control_one_shot = ()
-    control_re_trigger = ()
+    CONTROL_LINEAR = ()
+    CONTROL_ON_OFF = ()
+    CONTROL_MOMENTARY = ()
+    CONTROL_ONE_SHOT = ()
+    CONTROL_RE_TRIGGER = ()
 
-    data_selector = ()
-    data_static_value = ()
-    data_static_flag = ()
-    data_dynamic_value = ()
-    data_dynamic_flag = ()
+    DATA_SELECTOR = ()
+    DATA_STATIC_VALUE = ()
+    DATA_STATIC_FLAG = ()
+    DATA_DYNAMIC_VALUE = ()
+    DATA_DYNAMIC_FLAG = ()
 
-    collection_named_array = ()
-    collection_application = ()
-    collection_logical = ()
-    collection_physical = ()
-    collection_usage_switch = ()
-    collection_usage_modifier = ()
+    COLLECTION_NAMED_ARRAY = ()
+    COLLECTION_APPLICATION = ()
+    COLLECTION_LOGICAL = ()
+    COLLECTION_PHYSICAL = ()
+    COLLECTION_USAGE_SWITCH = ()
+    COLLECTION_USAGE_MODIFIER = ()
 
     def __new__(cls):
         value = len(cls.__members__) + 1
@@ -30,32 +30,32 @@ class UsageType(_Enum):
     @classmethod
     def control_usage_types(cls):
         return (
-            UsageType.control_linear,
-            UsageType.control_on_off,
-            UsageType.control_momentary,
-            UsageType.control_one_shot,
-            UsageType.control_re_trigger,
+            UsageType.CONTROL_LINEAR,
+            UsageType.CONTROL_ON_OFF,
+            UsageType.CONTROL_MOMENTARY,
+            UsageType.CONTROL_ONE_SHOT,
+            UsageType.CONTROL_RE_TRIGGER,
         )
 
     @classmethod
     def data_usage_types(cls):
         return (
-            UsageType.data_selector,
-            UsageType.data_static_value,
-            UsageType.data_static_flag,
-            UsageType.data_dynamic_value,
-            UsageType.data_dynamic_flag,
+            UsageType.DATA_SELECTOR,
+            UsageType.DATA_STATIC_VALUE,
+            UsageType.DATA_STATIC_FLAG,
+            UsageType.DATA_DYNAMIC_VALUE,
+            UsageType.DATA_DYNAMIC_FLAG,
         )
 
     @classmethod
     def collection_usage_types(cls):
         return (
-            UsageType.collection_named_array,
+            UsageType.COLLECTION_NAMED_ARRAY,
             # UsageType.collection_application, # Commented out as it is used for top level collections only
-            UsageType.collection_logical,
-            UsageType.collection_physical,
-            UsageType.collection_usage_switch,
-            UsageType.collection_usage_modifier
+            UsageType.COLLECTION_LOGICAL,
+            UsageType.COLLECTION_PHYSICAL,
+            UsageType.COLLECTION_USAGE_SWITCH,
+            UsageType.COLLECTION_USAGE_MODIFIER
         )
 
 class Usage:

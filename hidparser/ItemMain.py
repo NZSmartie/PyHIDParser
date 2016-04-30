@@ -7,7 +7,7 @@ class InputItem(Item):
     flags = None # type: ReportFlags
 
     def visit(self, descriptor: DeviceBuilder):
-        descriptor.add_report(ReportType.input, self.flags)
+        descriptor.add_report(ReportType.INPUT, self.flags)
 
     @classmethod
     def _get_tag(cls):
@@ -30,7 +30,7 @@ class OutputItem(Item):
     flags = None
 
     def visit(self, descriptor: DeviceBuilder):
-        descriptor.add_report(ReportType.output, self.flags)
+        descriptor.add_report(ReportType.OUTPUT, self.flags)
 
     @classmethod
     def _get_tag(cls):
@@ -53,7 +53,7 @@ class FeatureItem(Item):
     flags = None
 
     def visit(self, descriptor: DeviceBuilder):
-        descriptor.add_report(ReportType.feature, self.flags)
+        descriptor.add_report(ReportType.FEATURE, self.flags)
 
     @classmethod
     def _get_tag(cls):

@@ -22,14 +22,14 @@ def _create_button_usage(cls, value):
     if (value & ~0xFFFF) > 0:
         raise ValueError()
     button = Usage(value, [
-        UsageType.data_selector,
-        UsageType.control_on_off,
-        UsageType.control_momentary,
-        UsageType.control_one_shot
+        UsageType.DATA_SELECTOR,
+        UsageType.CONTROL_ON_OFF,
+        UsageType.CONTROL_MOMENTARY,
+        UsageType.CONTROL_ONE_SHOT
     ])
     button_enum = object.__new__(cls)
     button_enum._value_ = button
-    button_enum._name_ = "button{}".format(value)
+    button_enum._name_ = "BUTTON{}".format(value)
     button_enum.__objclass__ = cls
     button_enum.__init__(button)
     cls._member_names_.append(button_enum._name_)

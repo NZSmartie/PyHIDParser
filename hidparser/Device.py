@@ -82,17 +82,17 @@ class Collection:
     def append(self, item):
         if isinstance(item, Collection):
             self.items.append(item)
-            self._attrs[item._usage._name_] = item
+            self._attrs[item._usage._name_.lower()] = item
         elif isinstance(item, UsagePage):
             if not [usage_type for usage_type in item.usage_types if usage_type in self._usage_types]:
                 raise ValueError()
             collection = Collection(item)
             self.items.append(collection)
-            self._attrs[item._name_] = collection
+            self._attrs[item._name_.lower()] = collection
         elif isinstance(item, Report):
             if len(item.usages)>0:
                 for usage in item.usages:
-                    self._attrs[usage._name_] = property(
+                    self._attrs[usage._name_.lower()] = property(
                         fget=_partial(item.__getitem__, item.usages.index(usage)),
                         fset=_partial(item.__setitem__, item.usages.index(usage))
                     )
@@ -129,9 +129,9 @@ class Collection:
 
 class ReportGroup:
     def __init__(self):
-        self._inputs = Collection(allowed_usage_types=(UsageType.collection_application,))
-        self._outputs = Collection(allowed_usage_types=(UsageType.collection_application,))
-        self._features = Collection(allowed_usage_types=(UsageType.collection_application,))
+        self._inputs = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
+        self._outputs = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
+        self._features = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
 
     @property
     def inputs(self) -> Collection:

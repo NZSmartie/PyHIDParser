@@ -27,7 +27,7 @@ class DeviceBuilder:
         self.logical_range = ValueRange()
         self.physical_range = self.logical_range
 
-        self._collection = Collection(allowed_usage_types=(UsageType.collection_application,))
+        self._collection = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
         self._current_collection = self._collection
 
     @property
@@ -46,11 +46,11 @@ class DeviceBuilder:
 
         report = Report(usages, self.report_size, self.report_count, _copy.copy(self.logical_range), _copy.copy(self.physical_range))
 
-        if report_type is ReportType.input:
+        if report_type is ReportType.INPUT:
             collection = self._report_group.inputs
-        elif report_type is ReportType.output:
+        elif report_type is ReportType.OUTPUT:
             collection = self._report_group.outputs
-        elif report_type is ReportType.feature:
+        elif report_type is ReportType.FEATURE:
             collection = self._report_group.features
 
         collection = self._build_collection_path(self._current_collection, collection)
@@ -74,10 +74,10 @@ class DeviceBuilder:
         while len(path)>0:
             node = path.pop()
             try:
-                target = target.__getattr__(node._usage._name_)
+                target = target.__getattr__(node._usage._name_.lower())
             except AttributeError:
                 target.append(node._usage)
-                target = target.__getattr__(node._usage._name_)
+                target = target.__getattr__(node._usage._name_.lower())
         return target
 
     def set_report_id(self, report_id: int):

@@ -43,8 +43,8 @@ if __name__ is '__main__':
     # TODO accessing the collections by Usage could be cleaned up some how
     # Index 0 is used as a fallback when no ReportID Items are used
     # otherwise, Report ID must start at 1
-    mouse_from_api[0].inputs.append(GenericDesktop.mouse)
-    mouse_from_api[0].inputs.mouse.append(GenericDesktop.pointer)
+    mouse_from_api[0].inputs.append(GenericDesktop.MOUSE)
+    mouse_from_api[0].inputs.mouse.append(GenericDesktop.POINTER)
     mouse_from_api[0].inputs.mouse.pointer.extend([
         hidparser.Report(
             usages=hidparser.UsageRange(
@@ -54,23 +54,23 @@ if __name__ is '__main__':
             size=1,
             count=3,
             logical_range=(0, 1),
-            flags=hidparser.ReportFlags.variable
+            flags=hidparser.ReportFlags.VARIABLE
         ),
         hidparser.Report(
             usages=[],
             size=5,
             count=1,
-            flags=hidparser.ReportFlags.constant | hidparser.ReportFlags.variable
+            flags=hidparser.ReportFlags.CONSTANT | hidparser.ReportFlags.VARIABLE
         ),
         hidparser.Report(
             usages=[
-                hidparser.UsagePages.GenericDesktop.x,
-                hidparser.UsagePages.GenericDesktop.y
+                hidparser.UsagePages.GenericDesktop.X,
+                hidparser.UsagePages.GenericDesktop.Y
             ],
             size=8,
             count=2,
             logical_range=(-127, 127),
-            flags=hidparser.ReportFlags.variable | hidparser.ReportFlags.relative
+            flags=hidparser.ReportFlags.VARIABLE | hidparser.ReportFlags.RELATIVE
         )
     ])
 
