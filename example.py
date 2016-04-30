@@ -64,8 +64,8 @@ if __name__ is '__main__':
         ),
         hidparser.Report(
             usages=[
-                hidparser.UsagePages.GenericDesktop.X,
-                hidparser.UsagePages.GenericDesktop.Y
+                GenericDesktop.X,
+                GenericDesktop.Y
             ],
             size=8,
             count=2,

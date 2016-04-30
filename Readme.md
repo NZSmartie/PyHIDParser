@@ -1,5 +1,5 @@
 # PyHIDParser
-#### V0.0.3
+#### V0.0.4
 
 A python library for interpreting a HID descriptor to provide
 an application with byte structures for reading and writing to without the manual labour.
@@ -76,8 +76,8 @@ mouse_from_api[0].inputs.mouse.pointer.extend([
     ),
     hidparser.Report(
         usages=[
-            hidparser.UsagePages.GenericDesktop.X,
-            hidparser.UsagePages.GenericDesktop.Y
+            GenericDesktop.X,
+            GenericDesktop.Y
         ],
         size=8,
         count=2,

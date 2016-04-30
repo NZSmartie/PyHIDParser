@@ -2,14 +2,14 @@ from hidparser.enums import CollectionType
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
-from typing import List, Iterator
+from typing import List as _List, Union as _Union, Iterator
 from copy import copy as _copy
 from functools import partial as _partial
 from bitstring import BitArray as _BitArray
 
 
 class Report:
-    def __init__(self, usages: List[Usage], size: int = 0, count: int = 0, logical_range = None, physical_range = None, flags = None):
+    def __init__(self, usages: _Union[_List[Usage],_List[UsagePage]], size: int = 0, count: int = 0, logical_range = None, physical_range = None, flags = None):
         self.size = size
         self.count = count
         if type(logical_range) in (list, tuple):
