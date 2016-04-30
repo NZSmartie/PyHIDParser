@@ -74,12 +74,15 @@ if __name__ is '__main__':
         )
     ])
 
-    # TODO Read from device and deserialize with mouse_device. Something like:
-    # mouse_device.deserialize(bytes([0x00, 0x12, 0x34]))
+    # Read from the physical device
+    data = bytes([0x00, 0x12, 0x34])
+    # Deserialize the data and populate the object members
+    mouse_from_api.deserialize(data)
 
     # Read x,y from mouse
     pointer = mouse_from_api[0].inputs.mouse.pointer
     print("pointer: {}, {}".format(pointer.x, pointer.y))
+    # pointer 18.0, 52.0
 
     # TODO Create an example device with outputs and features
 

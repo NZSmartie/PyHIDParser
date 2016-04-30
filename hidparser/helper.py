@@ -21,7 +21,7 @@ class ValueRange:
         if not isinstance(new_range, ValueRange):
             raise ValueError("new_range is not ValueRange")
         if type(value) not in [int, float]:
-            raise ValueError("value is not a numeric value")
+            raise ValueError("{} is not a numeric value".format(type(value)))
         if not self.in_range(value):
             raise ValueError("value is outside of accepted range")
         value = (value - self.minimum) / (self.maximum - self.minimum)

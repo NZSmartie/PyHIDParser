@@ -1,5 +1,5 @@
 # PyHIDParser
-#### V0.0.4
+#### V0.0.5
 
 A python library for interpreting a HID descriptor to provide
 an application with byte structures for reading and writing to without the manual labour.
@@ -11,14 +11,14 @@ At this stage, this library is still in early development and adoption is not re
 #### Progress
 
   - [x] Parse HID descriptor from byte array
-  - [ ] Support for HID spec 1.11 items
+  - [ ] Support for HID spec 1.11 items *(See Issue #1)*
     - [x] Main items (Collections, Inputs, Outputs and Features)
     - [ ] Global items *(missing `unit` and `unit exponent`)*
     - [ ] Local items *(missing `designator index/maximum/minimum`, `string index/maximum/minimum` and  delimiter`)*
     - [ ] ~~Support vender defined long items~~ *(not going to happen any time soon)*
   - [x] Create an application API for handing HID items - *Don't want the application developer to deal with states, nesting or closing collections, etc*
     - [x] Access reports based on usages
-    - [ ] Serialize/Deserialize reports to/from the HID device
+    - [x] Serialize/Deserialize reports to/from the HID device
     - [x] Allow creating a HID descriptor from the API for configuring devices with
 
 ## Goals
@@ -32,7 +32,7 @@ At this stage, this library is still in early development and adoption is not re
   - Provide meta data about reports, such as physical descriptor index, usage switches/modifiers
 
 ## Example
-***Note: this is mostly a mockup example. It is subject to change***
+*Note: This is a ***working*** example. But it is subject to change*
 ```python
 import hidparser
 from hidparser.UsagePages import GenericDesktop, Button
@@ -89,7 +89,7 @@ mouse_from_api[0].inputs.mouse.pointer.extend([
 # Read from the physical device
 data = bytes([0x00, 0x12, 0x34])
 # Deserialize the data and populate the object members
-mouse_device.deserialize(data)
+mouse_from_api.deserialize(data)
 
 # Read the x,y members from mouse after deserializing
 pointer = mouse_from_api[0].inputs.mouse.pointer

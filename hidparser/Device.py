@@ -2,10 +2,10 @@ from hidparser.enums import CollectionType
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
-from typing import List as _List, Union as _Union, Iterator
+from typing import List as _List, Union as _Union, Iterator, Dict as _Dict
 from copy import copy as _copy
 from functools import partial as _partial
-from bitstring import BitArray as _BitArray
+from bitstring import BitArray as _BitArray, Bits as _Bits
 
 
 class Report:
@@ -23,6 +23,10 @@ class Report:
         # TODO make use of flags
         self.flags = flags
         self._values = [0]*self.count if self.count>0 else 0
+
+    @property
+    def bits(self):
+        return self.size * self.count
 
     @property
     def value(self):
@@ -55,13 +59,16 @@ class Report:
     def pack(self):
         values = _BitArray(self.count*self.size)
         for i in range(self.count):
-            values[i:i+self.size] = int(self.physical_range.scale_to(self.logical_range, self._values[i]))
-        return values.tobytes()
+            offset = i * self.size
+            values[offset:offset + self.size] = int(self.physical_range.scale_to(self.logical_range, self._values[i]))
+        return values
 
     def unpack(self, data):
-        values = _BitArray(data)
+        if not isinstance(data, _Bits):
+            data = _Bits(data)
         for i in range(self.count):
-            self._values[i] = self.logical_range.scale_to(self.physical_range, values[i:i + self.size])
+            offset = i*self.size
+            self._values[i] = self.logical_range.scale_to(self.physical_range, data[offset:offset + self.size].int)
 
 
 class Collection:
@@ -76,13 +83,39 @@ class Collection:
         self.collection_type = collection_type
         self._usage_types = allowed_usage_types
         self._usage = usage
-        self.items = []
+        self.items = [] # type: _List[_Union[Collection, Report]]
         self._attrs = {}
+
+    @property
+    def bits(self):
+        # TODO Cache the total bit size, and invalidate when a child Collection or Report is added somewhere in the tree
+        return sum([item.bits for item in self.items])
+
+    def deserialize(self, data: _Union[bytes, _Bits]):
+        offset = 0
+        if not isinstance(data, _Bits):
+            data = _Bits(data)
+        for item in self.items:
+            if isinstance(item, Report):
+                item.unpack(data[offset:offset + item.bits])
+            else:
+                item.deserialize(data[offset:offset + item.bits])
+            offset += item.bits
+
+    def serialize(self) -> bytes:
+        data = _BitArray()
+        for item in self.items:
+            if isinstance(item, Report):
+                data.append(item.pack())
+            else:
+                data.append(item.serialize())
+        return data
 
     def append(self, item):
         if isinstance(item, Collection):
             self.items.append(item)
             self._attrs[item._usage._name_.lower()] = item
+            self._bits += item.bits
         elif isinstance(item, UsagePage):
             if not [usage_type for usage_type in item.usage_types if usage_type in self._usage_types]:
                 raise ValueError()
@@ -97,6 +130,7 @@ class Collection:
                         fset=_partial(item.__setitem__, item.usages.index(usage))
                     )
             self.items.append(item)
+            self._bits += item.bits
         else:
             raise ValueError("usage type is not UsagePage or Report")
 
@@ -147,8 +181,21 @@ class ReportGroup:
 
 
 class Device:
+    def deserialize(self, data: bytes):
+        if len(self._reports) == 0:
+            raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
+        if 0 in self._reports.keys():
+            self._reports[0].inputs.deserialize(data)
+        else:
+            self._reports[data[0]].inputs.deserialize(data[1:])
+
+    def serialize(self, report: int = 0) -> bytes:
+        if len(self._reports) == 0:
+            raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
+        return self._reports[report].inputs.serialize()
+
     def __init__(self, reports=None):
-        self._reports = reports if reports is not None else {}
+        self._reports = reports if reports is not None else {} # type: _Dict[int, ReportGroup]
 
     def __getitem__(self, item) -> ReportGroup:
         if item not in self._reports:
