@@ -35,9 +35,7 @@ At this stage, this library is still in early development and adoption is not re
 ***Note: this is mostly a mockup example. It is subject to change***
 ```python
 import hidparser
-from hidparser import Device, Report, ReportFlags
-from hidparser.UsagePage import GenericDesktop, Button, UsageRange
-from hidparser.helper import ValueRange
+from hidparser.UsagePages import GenericDesktop, Button
 
 # ...
 
@@ -49,50 +47,54 @@ mouse_desc = array('B', [
     0xc0         # END_COLLECTION
     ])
 
-# This returns a Device
-mouse_from_desc = hidparser.parse(mouse_desc)
+# This returns a Device object from a descriptor
+mouse_from_desc = hidparser.parse(mouse)
 
 # Alternatively, create a mouse device through API instead of parsing bytes
-mouse_from_api = Device()
+mouse_from_api = hidparser.Device()
 
 # Index 0 is used as a fallback when no ReportID Items are used
 # otherwise, Report ID must start at 1
 mouse_from_api[0].inputs.append(GenericDesktop.mouse)
 mouse_from_api[0].inputs.mouse.append(GenericDesktop.pointer)
 mouse_from_api[0].inputs.mouse.pointer.extend([
-    Report(
-        usages=UsageRange(
+    hidparser.Report(
+        usages=hidparser.UsageRange(
             minimum=Button(1),
             maximum=Button(3)
         ).get_range(),
         size=1,
         count=3,
-        logical_range=ValueRange(0, 1),
-        flags=ReportFlags.variable
+        logical_range=(0, 1),
+        flags=hidparser.ReportFlags.variable
     ),
-    Report(
+    hidparser.Report(
         usages=[],
         size=5,
         count=1,
-        flags=ReportFlags.constant | ReportFlags.variable
+        flags=hidparser.ReportFlags.constant | hidparser.ReportFlags.variable
     ),
-    Report(
+    hidparser.Report(
         usages=[
-            GenericDesktop.x,
-            GenericDesktop.y
+            hidparser.UsagePages.GenericDesktop.x,
+            hidparser.UsagePages.GenericDesktop.y
         ],
         size=8,
         count=2,
-        logical_range=ValueRange(-127, 127),
-        flags=ReportFlags.variable | ReportFlags.relative
+        logical_range=(-127, 127),
+        flags=hidparser.ReportFlags.variable | hidparser.ReportFlags.relative
     )
 ])
 
-mouse_from_api.deserialize(bytes([0x00, 0x12, 0x34]))
+# Read from the physical device
+data = bytes([0x00, 0x12, 0x34])
+# Deserialize the data and populate the object members
+mouse_device.deserialize(data)
 
-# Read x,y from mouse
+# Read the x,y members from mouse after deserializing
 pointer = mouse_from_api[0].inputs.mouse.pointer
 print("pointer: {}, {}".format(pointer.x, pointer.y))
+# Example Output:
 # pointer: 18, 52
 
 ```
