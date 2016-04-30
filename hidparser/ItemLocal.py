@@ -13,7 +13,7 @@ class UsageItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class UsageMinimumItem(ValueItem):
@@ -26,7 +26,7 @@ class UsageMinimumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class UsageMaximumItem(ValueItem):
@@ -39,7 +39,7 @@ class UsageMaximumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class DesignatorIndexItem(ValueItem):
@@ -49,7 +49,7 @@ class DesignatorIndexItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class DesignatorMaximumItem(ValueItem):
@@ -59,7 +59,7 @@ class DesignatorMaximumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class DesignatorMinimumItem(ValueItem):
@@ -69,7 +69,7 @@ class DesignatorMinimumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class StringIndexItem(ValueItem):
@@ -79,7 +79,7 @@ class StringIndexItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class StringMinimumItem(ValueItem):
@@ -89,7 +89,7 @@ class StringMinimumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class StringMaximumItem(ValueItem):
@@ -99,7 +99,7 @@ class StringMaximumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 
 
 class DelimiterItem(Item):
@@ -109,5 +109,5 @@ class DelimiterItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.local
+        return ItemType.LOCAL
 

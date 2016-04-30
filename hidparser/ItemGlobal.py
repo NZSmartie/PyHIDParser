@@ -24,7 +24,7 @@ class UsagePageItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
     def __repr__(self):
         return "<{}: {}>".format(self.__class__.__name__, self.usage_page.__name__)
@@ -40,7 +40,7 @@ class LogicalMinimumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class LogicalMaximumItem(ValueItem):
@@ -53,7 +53,7 @@ class LogicalMaximumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class PhysicalMinimumItem(ValueItem):
@@ -66,7 +66,7 @@ class PhysicalMinimumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class PhysicalMaximumItem(ValueItem):
@@ -79,7 +79,7 @@ class PhysicalMaximumItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class UnitExponentItem(ValueItem):
@@ -90,7 +90,7 @@ class UnitExponentItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class UnitItem(Item):
@@ -101,7 +101,7 @@ class UnitItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class ReportSizeItem(ValueItem):
@@ -115,7 +115,7 @@ class ReportSizeItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class ReportIdItem(ValueItem):
@@ -128,7 +128,7 @@ class ReportIdItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class ReportCountItem(ValueItem):
@@ -142,7 +142,7 @@ class ReportCountItem(ValueItem):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class PushItem(Item):
@@ -155,7 +155,7 @@ class PushItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL
 
 
 class PopItem(Item):
@@ -168,4 +168,4 @@ class PopItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.global_
+        return ItemType.GLOBAL

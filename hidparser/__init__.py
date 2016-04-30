@@ -49,7 +49,7 @@ def get_items(data):
 
             # Get the item tag type from bits 3 - 2
             item_type = ItemType(item & 0x0C)
-            if item_type is ItemType.reserved:
+            if item_type is ItemType.RESERVED:
                 raise ValueError("Invalid bType in short item")
 
             yield Item.create(tag=item & 0xFC, data=get_bytes(byte_iter, size))

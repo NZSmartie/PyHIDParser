@@ -15,7 +15,7 @@ class InputItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.main
+        return ItemType.MAIN
 
     def __init__(self, **kwargs):
         super(InputItem, self).__init__(**kwargs)
@@ -38,7 +38,7 @@ class OutputItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.main
+        return ItemType.MAIN
 
     def __init__(self, **kwargs):
         super(OutputItem, self).__init__(**kwargs)
@@ -61,7 +61,7 @@ class FeatureItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.main
+        return ItemType.MAIN
 
     def __init__(self, **kwargs):
         super(FeatureItem, self).__init__(**kwargs)
@@ -81,7 +81,7 @@ class CollectionItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.main
+        return ItemType.MAIN
 
     def visit(self, descriptor: DeviceBuilder):
         if not isinstance(self.collection, CollectionType):
@@ -109,4 +109,4 @@ class EndCollectionItem(Item):
 
     @classmethod
     def _get_type(cls):
-        return ItemType.main
+        return ItemType.MAIN

@@ -10,10 +10,10 @@ from array import array as _array
 
 
 class ItemType(IntEnum):
-    main = 0x00
-    global_ = 0x04
-    local = 0x08
-    reserved = 0x0C
+    MAIN = 0x00
+    GLOBAL = 0x04
+    LOCAL = 0x08
+    RESERVED = 0x0C
 
 
 class Item(metaclass=_ABCMeta):
