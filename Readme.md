@@ -11,7 +11,7 @@ At this stage, this library is still in early development and adoption is not re
 #### Progress
 
   - [x] Parse HID descriptor from byte array
-  - [ ] Support for HID spec 1.11 items *(See Issue #1)*
+  - [ ] Support for HID spec 1.11 items *(See Issue [#1](https://github.com/NZSmartie/PyHIDParser/issues/1))*
     - [x] Main items (Collections, Inputs, Outputs and Features)
     - [ ] Global items *(missing `unit` and `unit exponent`)*
     - [ ] Local items *(missing `designator index/maximum/minimum`, `string index/maximum/minimum` and  delimiter`)*
