@@ -243,6 +243,7 @@ class Device:
             if isinstance(item, Collection):
                 path.append(item)
                 self._populate_report_types(item, path.copy())
+                path.pop()
                 continue
             # assume the item is a Report
             if item.report_id not in self._reports.keys():
