@@ -14,10 +14,9 @@ def parse(data):
 
     descriptor_builder = DeviceBuilder()
     for item in items:
-        print(item)
         item.visit(descriptor_builder)
 
-    return Device(reports=descriptor_builder.reports)
+    return descriptor_builder.build()
 
 
 def get_items(data):

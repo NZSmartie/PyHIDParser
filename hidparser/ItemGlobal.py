@@ -7,7 +7,8 @@ from hidparser.UsagePage import UsagePage
 class UsagePageItem(ValueItem):
     usage_page = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        kwargs["signed"] = False
         super(UsagePageItem, self).__init__(**kwargs)
 
         if len(self.data) not in [1,2]:
@@ -105,6 +106,9 @@ class UnitItem(Item):
 
 
 class ReportSizeItem(ValueItem):
+    def __init__(self, *args, **kwargs):
+        kwargs["signed"] = False
+        super(ReportSizeItem, self).__init__(*args, **kwargs)
 
     def visit(self, descriptor: DeviceBuilder):
         descriptor.report_size = self.value
@@ -119,6 +123,10 @@ class ReportSizeItem(ValueItem):
 
 
 class ReportIdItem(ValueItem):
+    def __init__(self, *args, **kwargs):
+        kwargs["signed"] = False
+        super(ReportIdItem, self).__init__(*args, **kwargs)
+
     def visit(self, descriptor: DeviceBuilder):
         descriptor.set_report_id(self.value)
 
@@ -132,6 +140,9 @@ class ReportIdItem(ValueItem):
 
 
 class ReportCountItem(ValueItem):
+    def __init__(self, *args, **kwargs):
+        kwargs["signed"] = False
+        super(ReportCountItem, self).__init__(*args, **kwargs)
 
     def visit(self, descriptor: DeviceBuilder):
         descriptor.report_count = self.value

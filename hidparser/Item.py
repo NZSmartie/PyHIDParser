@@ -40,7 +40,7 @@ class Item(metaclass=_ABCMeta):
 
     # Concrete methods
 
-    def __init__(self, data: _array = None, long: bool = False):
+    def __init__(self, data: _array = None, long: bool = False, *args, **kwargs):
         self.data = data
 
     def __repr__(self):
@@ -97,13 +97,13 @@ class ValueItem(Item):
 
     def __init__(self, **kwargs):
         super(ValueItem, self).__init__(**kwargs)
-
+        signed = kwargs["signed"] if "signed" in kwargs.keys() else True
         if len(self.data) == 1:
-            self.value = _struct.unpack("b", bytes(self.data))[0]
+            self.value = _struct.unpack("<b" if signed else "<B", bytes(self.data))[0]
         if len(self.data) == 2:
-            self.value = _struct.unpack("h", bytes(self.data))[0]
+            self.value = _struct.unpack("<h"if signed else "<H", bytes(self.data))[0]
         if len(self.data) == 4:
-            self.value = _struct.unpack("i", bytes(self.data))[0]
+            self.value = _struct.unpack("<i" if signed else "<I", bytes(self.data))[0]
 
     @classmethod
     def _get_tag(cls):
