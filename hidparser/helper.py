@@ -23,7 +23,7 @@ class ValueRange:
         if type(value) not in [int, float]:
             raise ValueError("{} is not a numeric value".format(type(value)))
         if not self.in_range(value):
-            raise ValueError("value is outside of accepted range")
+            raise ArithmeticError("value is outside of accepted range")
         value = (value - self.minimum) / (self.maximum - self.minimum)
         return new_range.minimum + value * (new_range.maximum - new_range.minimum)
 

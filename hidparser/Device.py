@@ -1,4 +1,4 @@
-from hidparser.enums import CollectionType, ReportType
+from hidparser.enums import CollectionType, ReportType, ReportFlags
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
@@ -36,7 +36,6 @@ class Report:
             usages = (usages,)
         self.usages = usages
 
-        # TODO make use of flags
         self.flags = flags
 
         self.parent = parent
@@ -59,13 +58,10 @@ class Report:
                 raise ValueError("Can not set {} to {}".format(type(value), self.__class__.__name__))
             if len(value) != self.count:
                 raise ValueError("Value must be of length {}".format(self.count))
-            for v in value:
-                if not self.physical_range.in_range(v):
-                    raise ValueRange("{} is not within physical range".format(v))
             self._values = value
         else:
             if not self.physical_range.in_range(value):
-                raise ValueRange("{} is not within physical range".format(value))
+                raise ArithmeticError("{} is not within physical range".format(value))
             self._values[0] = value
 
     def __getitem__(self, key):
@@ -78,7 +74,12 @@ class Report:
         values = _BitArray(self.count*self.size)
         for i in range(self.count):
             offset = i * self.size
-            values[offset:offset + self.size] = int(self.physical_range.scale_to(self.logical_range, self._values[i]))
+            try:
+                values[offset:offset + self.size] = int(self.physical_range.scale_to(self.logical_range, self._values[i]))
+            except ArithmeticError:
+                # If the value is outside of the physical range, and NULLs are allowed, then do not modify the value
+                if not self.flags & ReportFlags.NULL_STATE:
+                    raise
         return values
 
     def unpack(self, data):
@@ -86,7 +87,12 @@ class Report:
             data = _Bits(data)
         for i in range(self.count):
             offset = i*self.size
-            self._values[i] = self.logical_range.scale_to(self.physical_range, data[offset:offset + self.size].int)
+            try:
+                self._values[i] = self.logical_range.scale_to(self.physical_range, data[offset:offset + self.size].int)
+            except ArithmeticError:
+                # If the value is outside of the logical range, and NULLs are allowed, then do not modify the value
+                if not self.flags & ReportFlags.NULL_STATE:
+                    raise
 
 
 class Collection:
