@@ -219,18 +219,35 @@ class ReportGroup:
 
 
 class Device:
-    def deserialize(self, data: bytes):
+    def deserialize(self, data: bytes, report_type: ReportType=None):
+        report = 0
         if len(self._reports) == 0:
             raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
-        if 0 in self._reports.keys():
-            self._reports[0].inputs.deserialize(data)
-        else:
-            self._reports[data[0]].inputs.deserialize(data[1:])
 
-    def serialize(self, report: int = 0) -> bytes:
+        if report_type is None:
+            report_type = ReportType.INPUT
+        if 0 not in self._reports.keys():
+            report = data[0]
+            data = data[1:]
+
+        if report_type is ReportType.INPUT:
+            return self._reports[report].inputs.deserialize(data)
+        if report_type is ReportType.OUTPUT:
+            return self._reports[report].outputs.deserialize(data)
+        if report_type is ReportType.FEATURE:
+            return self._reports[report].features.deserialize(data)
+
+    def serialize(self, report: int = 0, report_type: ReportType=None) -> bytes:
+        if report_type is None:
+            report_type = ReportType.OUTPUT
         if len(self._reports) == 0:
             raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
-        return self._reports[report].outputs.serialize()
+        if report_type is ReportType.INPUT:
+            return self._reports[report].inputs.serialize()
+        if report_type is ReportType.OUTPUT:
+            return self._reports[report].outputs.serialize()
+        if report_type is ReportType.FEATURE:
+            return self._reports[report].features.serialize()
 
     def __init__(self, collection=None):
         self._reports = {}  # type: _Dict[int, ReportGroup]
