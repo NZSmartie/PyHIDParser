@@ -1,5 +1,5 @@
 # PyHIDParser
-#### V0.0.5
+#### V0.0.6
 
 A python library for interpreting a HID descriptor to provide
 an application with byte structures for reading and writing to without the manual labour.
@@ -31,7 +31,12 @@ At this stage, this library is still in early development and adoption is not re
   - Support adding vendor defined usage pages through API
   - Provide meta data about reports, such as physical descriptor index, usage switches/modifiers
 
-## Example
+## Examples
+
+More examples int the [examples/](examples/) folder:
+ - [mouse.py](examples/mouse.py) - Creating the example Mouse descriptor from the HID 1.11 spec
+ - [dual-shock-3.py](examples/dual-shock-3.py)  - Parse Sony's DualShock3 HID descriptor
+
 *Note: This is a ***working*** example. But it is subject to change*
 ```python
 import hidparser
@@ -51,40 +56,45 @@ mouse_desc = array('B', [
 mouse_from_desc = hidparser.parse(mouse)
 
 # Alternatively, create a mouse device through API instead of parsing bytes
-mouse_from_api = hidparser.Device()
-
-# Index 0 is used as a fallback when no ReportID Items are used
-# otherwise, Report ID must start at 1
-mouse_from_api[0].inputs.append(GenericDesktop.MOUSE)
-mouse_from_api[0].inputs.mouse.append(GenericDesktop.POINTER)
-mouse_from_api[0].inputs.mouse.pointer.extend([
-    hidparser.Report(
-        usages=hidparser.UsageRange(
-            minimum=Button(1),
-            maximum=Button(3)
-        ).get_range(),
-        size=1,
-        count=3,
-        logical_range=(0, 1),
-        flags=hidparser.ReportFlags.VARIABLE
-    ),
-    hidparser.Report(
-        usages=[],
-        size=5,
-        count=1,
-        flags=hidparser.ReportFlags.CONSTANT | hidparser.ReportFlags.VARIABLE
-    ),
-    hidparser.Report(
-        usages=[
-            GenericDesktop.X,
-            GenericDesktop.Y
-        ],
-        size=8,
-        count=2,
-        logical_range=(-127, 127),
-        flags=hidparser.ReportFlags.VARIABLE | hidparser.ReportFlags.RELATIVE
+mouse_from_api = hidparser.Device(
+    hidparser.Collection(
+        usage=GenericDesktop.MOUSE,
+        items=hidparser.Collection(
+            usage=GenericDesktop.POINTER,
+            items=[
+                hidparser.Report(
+                    report_type=hidparser.ReportType.INPUT,
+                    usages=hidparser.UsageRange(
+                        minimum=Button(1),
+                        maximum=Button(3)
+                    ).get_range(),
+                    size=1,
+                    count=3,
+                    logical_range=(0, 1),
+                    flags=hidparser.ReportFlags.VARIABLE
+                ),
+                hidparser.Report(
+                    report_type=hidparser.ReportType.INPUT,
+                    usages=[],
+                    size=5,
+                    count=1,
+                    flags=hidparser.ReportFlags.CONSTANT | hidparser.ReportFlags.VARIABLE
+                ),
+                hidparser.Report(
+                    report_type=hidparser.ReportType.INPUT,
+                    usages=[
+                        GenericDesktop.X,
+                        GenericDesktop.Y
+                    ],
+                    size=8,
+                    count=2,
+                    logical_range=(-127, 127),
+                    flags=hidparser.ReportFlags.VARIABLE | hidparser.ReportFlags.RELATIVE
+                )
+            ]
+        )
     )
-])
+)
 
 # Read from the physical device
 data = bytes([0x00, 0x12, 0x34])
@@ -92,7 +102,7 @@ data = bytes([0x00, 0x12, 0x34])
 mouse_from_api.deserialize(data)
 
 # Read the x,y members from mouse after deserializing
-pointer = mouse_from_api[0].inputs.mouse.pointer
+pointer = mouse_from_api.reports[0].inputs.mouse.pointer
 print("pointer: {}, {}".format(pointer.x, pointer.y))
 # Example Output:
 # pointer: 18, 52
