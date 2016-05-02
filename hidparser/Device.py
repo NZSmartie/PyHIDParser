@@ -69,6 +69,10 @@ class Report:
     def __setitem__(self, key, value):
         self._values[key] = value
 
+    # TODO print out more meaningful information about this Report
+    def __str__(self, index=0):
+        return "{}Report: {}".format("  " * index, ", ".join([usage._name_ for usage in self.usages]))
+
     def pack(self):
         values = _BitArray(self.count*self.size)
         for i in range(self.count):
@@ -197,6 +201,13 @@ class Collection:
             return self._usage is other
         return super(Collection, self).__cmp__(other)
 
+    # TODO print out more meaningful information about this Collection
+    def __str__(self, index=0):
+        result = "{}Collection {}".format(" " * index * 2, self.collection_type._name_)
+        for item in self.items:
+            result += "\n"+item.__str__(index+1)
+        return result
+
 
 class ReportGroup:
     def __init__(self):
@@ -311,3 +322,21 @@ class Device:
                 target = path.pop(0)
 
         collection.append(report)
+
+    def __str__(self, index = 0):
+        result = "Device:"
+        for report_id in self._reports.keys():
+            result += "\n  Report 0x{:02X}:".format(report_id)
+            if len(self._reports[report_id].inputs.items):
+                result += "\n    Inputs"
+                for collection in self._reports[report_id].inputs:
+                    result += "\n" + collection.__str__(4)
+            if len(self._reports[report_id].outputs.items):
+                result += "\n    Outputs"
+                for collection in self._reports[report_id].outputs:
+                    result += "\n" + collection.__str__(4)
+            if len(self._reports[report_id].features.items):
+                result += "\n    Features"
+                for collection in self._reports[report_id].features:
+                    result += "\n" + collection.__str__(4)
+        return result
