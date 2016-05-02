@@ -2,7 +2,6 @@ from hidparser.enums import CollectionType, ReportType, ReportFlags
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
-from typing import List as _List, Union as _Union, Iterator, Dict as _Dict
 from copy import copy as _copy
 from functools import partial as _partial
 from bitstring import BitArray as _BitArray, Bits as _Bits
@@ -13,7 +12,7 @@ class Report:
             self,
             report_type: ReportType,
             report_id: int = 0,
-            usages: _Union[_List[Usage],_List[UsagePage]]=[],
+            usages=[],
             size: int=0,
             count: int=0,
             logical_range=None,
@@ -128,7 +127,7 @@ class Collection:
     def get_bit_size(self, report_type: ReportType):
         return sum([item.bits for item in self.items if item.report_type == report_type])
 
-    def deserialize(self, data: _Union[bytes, _Bits]):
+    def deserialize(self, data):
         offset = 0
         if not isinstance(data, _Bits):
             data = _Bits(data)
@@ -290,7 +289,7 @@ class Device:
                     item
                 )
 
-    def _collection_add_report(self, collection: Collection, path: _List[Collection], report: Report):
+    def _collection_add_report(self, collection: Collection, path, report: Report):
         while len(path)>0:
             target = path.pop(0)
             try:

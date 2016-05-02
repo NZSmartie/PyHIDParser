@@ -4,8 +4,6 @@ from hidparser.UsagePage import UsagePage, Usage, UsageType, UsageRange
 from hidparser.Device import Device, Report, ReportGroup, Collection
 from hidparser.helper import ValueRange
 
-from typing import Union as _Union
-
 
 class DeviceBuilder:
     def __init__(self):
@@ -22,7 +20,7 @@ class DeviceBuilder:
         self._collection = Collection(allowed_usage_types=UsageType.COLLECTION_APPLICATION)
         self._current_collection = self._collection
 
-    def add_report(self, report_type: ReportType, flags: _Union[ReportFlags, EnumMask, int]):
+    def add_report(self, report_type: ReportType, flags):
         usages = []
         try:
             while len(usages) < self.report_count:
@@ -71,7 +69,7 @@ class DeviceBuilder:
         if maximum is not None:
             self.physical_range.maximum = maximum
 
-    def add_usage(self, usage: _Union[UsagePage, Usage, int]):
+    def add_usage(self, usage):
         if isinstance(usage, Usage):
             self._usages.append(usage)
         elif isinstance(usage, UsagePage):
