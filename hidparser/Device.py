@@ -71,7 +71,10 @@ class Report:
 
     # TODO print out more meaningful information about this Report
     def __str__(self, index=0):
-        return "{}Report: {}".format("  " * index, ", ".join([usage._name_ for usage in self.usages]))
+        result = "{}Report (size: {}, count: {})\n{}".format("  " * index, self.size, self.count,"  " * (index + 1))
+        if self.flags & ReportFlags.CONSTANT:
+            return result + "(Constant)"
+        return result + ", ".join([usage._name_ for usage in self.usages])
 
     def pack(self):
         values = _BitArray(self.count*self.size)
@@ -203,7 +206,7 @@ class Collection:
 
     # TODO print out more meaningful information about this Collection
     def __str__(self, index=0):
-        result = "{}Collection {}".format(" " * index * 2, self.collection_type._name_)
+        result = "{}Collection {}{}".format(" " * index * 2, self.collection_type._name_, (" ("+self._usage._name_+")") if self._usage is not None else "")
         for item in self.items:
             result += "\n"+item.__str__(index+1)
         return result
