@@ -134,6 +134,10 @@ class Collection:
     def get_bit_size(self, report_type: ReportType):
         return sum([item.bits for item in self.items if item.report_type == report_type])
 
+    def get_size(self, report_type: ReportType):
+        bits = self.get_bit_size(report_type)
+        return int(bits / 8) + 1
+
     def deserialize(self, data):
         offset = 0
         if not isinstance(data, _Bits):
@@ -215,20 +219,38 @@ class Collection:
 class ReportGroup:
     def __init__(self):
         self._inputs = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
+        self._input_size = None
         self._outputs = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
+        self._output_size = None
         self._features = Collection(allowed_usage_types=(UsageType.COLLECTION_APPLICATION,))
+        self._feature_size = None
 
     @property
     def inputs(self) -> Collection:
         return self._inputs
 
     @property
+    def input_size(self) -> int:
+        if self._input_size in None:
+            self._input_size = self._inputs.get_size(ReportType.INPUT)
+
+    @property
     def outputs(self) -> Collection:
         return self._outputs
 
     @property
+    def output_size(self) -> int:
+        if self._output_size in None:
+            self._output_size = self._inputs.get_size(ReportType.OUTPUT)
+
+    @property
     def features(self) -> Collection:
         return self._features
+
+    @property
+    def feature_size(self) -> int:
+        if self._feature_size in None:
+            self._feature_size = self._inputs.get_size(ReportType.FEATURE)
 
 
 class Device:
