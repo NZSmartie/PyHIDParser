@@ -94,7 +94,8 @@ class Report:
         for i in range(self.count):
             offset = i*self.size
             try:
-                self._values[i] = self.logical_range.scale_to(self.physical_range, data[offset:offset + self.size].int)
+                b = data[offset:offset + self.size]
+                self._values[i] = self.logical_range.scale_to(self.physical_range, b.int if self.logical_range.minimum<0 else b.uint)
             except ArithmeticError:
                 # If the value is outside of the logical range, and NULLs are allowed, then do not modify the value
                 if not self.flags & ReportFlags.NULL_STATE:
@@ -143,30 +144,30 @@ class Collection:
 
     def get_size(self, report_type: ReportType):
         bits = self.get_bit_size(report_type)
-        return int(bits / 8) + 1
+        return int((bits - 1) / 8) + 1
 
-    def deserialize(self, data):
+    def deserialize(self, data, report_type: ReportType):
         offset = 0
         if not isinstance(data, _Bits):
             data = _Bits(data)
         for item in self.items:
             if isinstance(item, Report):
-                if item.report_type not in (ReportType.INPUT, ReportType.FEATURE):
+                if item.report_type is not report_type:
                     continue
                 item.unpack(data[offset:offset + item.bits])
             else:
-                item.deserialize(data[offset:offset + item.bits])
+                item.deserialize(data[offset:offset + item.bits], report_type)
             offset += item.bits
 
-    def serialize(self) -> bytes:
+    def serialize(self, report_type: ReportType) -> bytes:
         data = _BitArray()
         for item in self.items:
             if isinstance(item, Report):
-                if item.report_type is not ReportType.OUTPUT:
+                if item.report_type is not report_type:
                     continue
                 data.append(item.pack())
             else:
-                data.append(item.serialize())
+                data.append(item.serialize(report_type))
         return data
 
     def append(self, item):
@@ -276,11 +277,17 @@ class Device:
             data = data[1:]
 
         if report_type is ReportType.INPUT:
-            return self._reports[report].inputs.deserialize(data)
+            if self._reports[report].input_size != len(data):
+                raise ValueError("data({}) does not match input_size({})".format(len(data),self._reports[report].input_size))
+            return self._reports[report].inputs.deserialize(data, report_type)
         if report_type is ReportType.OUTPUT:
-            return self._reports[report].outputs.deserialize(data)
+            if self._reports[report].output_size != len(data):
+                raise ValueError("data({}) does not match output_size({})".format(len(data)),self._reports[report].output_size)
+            return self._reports[report].outputs.deserialize(data, report_type)
         if report_type is ReportType.FEATURE:
-            return self._reports[report].features.deserialize(data)
+            if self._reports[report].feature_size != len(data):
+                raise ValueError("data({}) does not match feature_size({})".format(len(data),self._reports[report].feature_size))
+            return self._reports[report].features.deserialize(data, report_type)
 
     def serialize(self, report: int = 0, report_type: ReportType=None) -> bytes:
         if report_type is None:
@@ -288,11 +295,11 @@ class Device:
         if len(self._reports) == 0:
             raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
         if report_type is ReportType.INPUT:
-            return self._reports[report].inputs.serialize()
+            return self._reports[report].inputs.serialize(report_type)
         if report_type is ReportType.OUTPUT:
-            return self._reports[report].outputs.serialize()
+            return self._reports[report].outputs.serialize(report_type)
         if report_type is ReportType.FEATURE:
-            return self._reports[report].features.serialize()
+            return self._reports[report].features.serialize(report_type)
 
     def __init__(self, collection=None):
         self._reports = {}  # type: _Dict[int, ReportGroup]
