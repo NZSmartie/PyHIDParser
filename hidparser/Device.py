@@ -132,7 +132,14 @@ class Collection:
         return sum([item.bits for item in self.items])
 
     def get_bit_size(self, report_type: ReportType):
-        return sum([item.bits for item in self.items if item.report_type == report_type])
+        size = 0
+        for item in self.items:
+            if isinstance(item, Report):
+                if item.report_type == report_type:
+                    size += item.bits
+            else:
+                size += item.get_bit_size(report_type)
+        return size
 
     def get_size(self, report_type: ReportType):
         bits = self.get_bit_size(report_type)
@@ -231,8 +238,9 @@ class ReportGroup:
 
     @property
     def input_size(self) -> int:
-        if self._input_size in None:
+        if self._input_size is None:
             self._input_size = self._inputs.get_size(ReportType.INPUT)
+        return self._input_size
 
     @property
     def outputs(self) -> Collection:
@@ -240,8 +248,9 @@ class ReportGroup:
 
     @property
     def output_size(self) -> int:
-        if self._output_size in None:
+        if self._output_size is None:
             self._output_size = self._inputs.get_size(ReportType.OUTPUT)
+        return self._output_size
 
     @property
     def features(self) -> Collection:
@@ -249,8 +258,9 @@ class ReportGroup:
 
     @property
     def feature_size(self) -> int:
-        if self._feature_size in None:
+        if self._feature_size is None:
             self._feature_size = self._inputs.get_size(ReportType.FEATURE)
+        return self._feature_size
 
 
 class Device:
