@@ -174,23 +174,31 @@ class Collection:
         if isinstance(item, Collection):
             self.items.append(item)
             if item._usage is not None:
-                self._attrs[item._usage._name_.lower()] = item
+                self._add_to_attr(item._usage._name_.lower(), item)
         elif isinstance(item, UsagePage):
             if not [usage_type for usage_type in item.usage_types if usage_type in self._usage_types]:
                 raise ValueError()
             collection = Collection(usage=item)
             self.items.append(collection)
-            self._attrs[item._name_.lower()] = collection
+            self._add_to_attr(item._usage._name_.lower(), collection)
         elif isinstance(item, Report):
             if len(item.usages)>0:
                 for usage in item.usages:
-                    self._attrs[usage._name_.lower()] = property(
+                    self._add_to_attr(usage._name_.lower(), property(
                         fget=_partial(item.__getitem__, item.usages.index(usage)),
                         fset=_partial(item.__setitem__, item.usages.index(usage))
-                    )
+                    ))
             self.items.append(item)
         else:
             raise ValueError("usage type is not UsagePage or Report")
+
+    def _add_to_attr(self, key, item):
+        if key in self._attrs.keys():
+            if type(self._attrs[key]) is not list:
+                self._attrs[key] = [self._attrs[key]]
+            self._attrs[key].append(item)
+        else:
+            self._attrs[key] = item
 
     def extend(self, items):
         for item in items:
@@ -304,6 +312,7 @@ class Device:
     def __init__(self, collection=None):
         self._reports = {}  # type: _Dict[int, ReportGroup]
         self._collection = Collection(items=collection, allowed_usage_types=UsageType.COLLECTION_APPLICATION)
+        # Create ReportGroups from the Report IDs found in the master Collection
         self._populate_report_types(self._collection)
 
     @property
@@ -320,9 +329,13 @@ class Device:
                 self._populate_report_types(item, path.copy())
                 path.pop()
                 continue
+
             # assume the item is a Report
+
+            # Create a ReportGroup on a new Report ID
             if item.report_id not in self._reports.keys():
                 self._reports[item.report_id] = ReportGroup()
+
             if item.report_type is ReportType.INPUT:
                 self._collection_add_report(
                     self._reports[item.report_id].inputs,
