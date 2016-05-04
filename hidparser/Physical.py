@@ -68,6 +68,14 @@ class PhysicalDescriptor:
         self.qualifier = qualifier
         self.effort = effort
 
+    def __repr__(self):
+        return "<{}: {}, {}, Effort {:d}>".format(
+            self.__class__.__name__,
+            self.designator._name_.replace("_"," ").title(),
+            self.qualifier._name_.replace("_", " ").title(),
+            self.effort
+        )
+
 
 class PhysicalDescriptorSet:
     _total = 0
@@ -112,7 +120,7 @@ class PhysicalDescriptorSet:
         if type(index) is not int or index in self._sets.keys():
             raise IndexError("Invalid index for PhysicalDescriptorSet")
         self.index = index
-        self.bias = bias,
+        self.bias = bias
         if not 0 <= preference <= 31:
             raise ValueError("preference({}) can not be outside of range 0 to 31".format(preference))
         self.preference = preference
@@ -143,3 +151,11 @@ class PhysicalDescriptorSet:
         if len([descriptor for descriptor in items if not isinstance(descriptor, PhysicalDescriptor)]):
             raise ValueError("Can not assign item that's not a PhysicalDescriptor")
         self.descriptors.extend(items)
+
+    def __repr__(self):
+        return "<{}: Bias({}), Preference({}), [{}]>".format(
+            self.__class__.__name__,
+            self.bias._name_.replace("_"," ").title(),
+            self.preference,
+            ", ".join([desc.__repr__() for desc in self.descriptors])
+        )
