@@ -9,6 +9,9 @@ class Bias(_Enum):
     BOTH_HANDS = 3
     EITHER_HAND = 4
 
+    def __str__(self):
+        return self._name_.replace("_", " ").title()
+
 
 class Qualifier(_Enum):
     NOT_APPLICABLE = 0
@@ -17,6 +20,9 @@ class Qualifier(_Enum):
     BOTH = 3
     EITHER = 4
     CENTER = 5
+
+    def __str__(self):
+        return self._name_.replace("_", " ").title()
 
 
 class Designator(_Enum):
@@ -61,6 +67,9 @@ class Designator(_Enum):
     BROW = 0x26
     CHEEK = 0x27
 
+    def __str__(self):
+        return self._name_.replace("_", " ").title()
+
 
 class PhysicalDescriptor:
     def __init__(self, designator: Designator, qualifier: Qualifier, effort: int=0):
@@ -71,8 +80,8 @@ class PhysicalDescriptor:
     def __repr__(self):
         return "<{}: {}, {}, Effort {:d}>".format(
             self.__class__.__name__,
-            self.designator._name_.replace("_"," ").title(),
-            self.qualifier._name_.replace("_", " ").title(),
+            self.designator.__str__(),
+            self.qualifier.__str__(),
             self.effort
         )
 
@@ -155,7 +164,7 @@ class PhysicalDescriptorSet:
     def __repr__(self):
         return "<{}: Bias({}), Preference({}), [{}]>".format(
             self.__class__.__name__,
-            self.bias._name_.replace("_"," ").title(),
+            self.bias.__str__(),
             self.preference,
             ", ".join([desc.__repr__() for desc in self.descriptors])
         )
