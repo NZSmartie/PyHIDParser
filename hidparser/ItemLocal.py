@@ -43,6 +43,9 @@ class UsageMaximumItem(ValueItem):
 
 
 class DesignatorIndexItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_designator_range(minimum=self.value, maximum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x38
@@ -53,6 +56,9 @@ class DesignatorIndexItem(ValueItem):
 
 
 class DesignatorMaximumItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_designator_range(maximum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x48
@@ -63,6 +69,9 @@ class DesignatorMaximumItem(ValueItem):
 
 
 class DesignatorMinimumItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_designator_range(minimum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x58

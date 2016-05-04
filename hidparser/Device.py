@@ -13,6 +13,7 @@ class Report:
             report_type: ReportType,
             report_id: int = 0,
             usages=[],
+            designators=None,
             size: int=0,
             count: int=0,
             logical_range=None,
@@ -24,6 +25,7 @@ class Report:
         self.report_type = report_type
         self.size = size
         self.count = count
+        self.designators = designators if designators is not None else range(0)
         if type(logical_range) in (list, tuple):
             logical_range = ValueRange(*logical_range)
         if type(physical_range) in (list, tuple):
