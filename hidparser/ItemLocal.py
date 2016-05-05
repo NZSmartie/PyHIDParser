@@ -82,6 +82,9 @@ class DesignatorMinimumItem(ValueItem):
 
 
 class StringIndexItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_string_range(minimum=self.value, maximum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x78
@@ -92,6 +95,9 @@ class StringIndexItem(ValueItem):
 
 
 class StringMinimumItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_string_range(minimum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x88
@@ -102,6 +108,9 @@ class StringMinimumItem(ValueItem):
 
 
 class StringMaximumItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.set_string_range(maximum=self.value)
+
     @classmethod
     def _get_tag(cls):
         return 0x98

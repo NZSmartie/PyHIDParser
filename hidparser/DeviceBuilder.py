@@ -12,6 +12,7 @@ class DeviceBuilder:
         self._usage_page = None
         self._usages = []
         self.designators = range(0)
+        self.strings = range(0)
 
         self.report_size = 0
         self.report_count = 0
@@ -38,11 +39,19 @@ class DeviceBuilder:
             designators = self.designators[0:-designator_diff]
             self.designators = self.designators[designator_diff + 1:]
 
+        strings = range(0)
+        if len(self.strings) > 0:
+            strings_diff = len(self.strings) - self.report_count
+            assert strings_diff >= 0, "Too few strings for report"
+            strings = self.strings[0:-strings_diff]
+            self.strings = self.strings[strings_diff + 1:]
+
         self._current_collection.append(Report(
             report_id=self._report_id,
             report_type=report_type,
             usages=usages,
             designators=designators,
+            strings=strings,
             size=self.report_size,
             count=self.report_count,
             logical_range=_copy.copy(self.logical_range),
@@ -59,6 +68,13 @@ class DeviceBuilder:
         if maximum is None:
             maximum = self.designators.stop - 1 # Subtract one, so the output range generator is inclusive from start to stop
         self.designators = range(minimum, maximum + 1)
+
+    def set_string_range(self, minimum=None, maximum=None):
+        if minimum is None:
+            minimum = self.strings.start
+        if maximum is None:
+            maximum = self.strings.stop - 1  # Subtract one, so the output range generator is inclusive from start to stop
+        self.strings = range(minimum, maximum + 1)
 
     def set_usage_range(self, minimum=None, maximum=None):
         usage = self._usages[len(self._usages)-1] if len(self._usages) else None
