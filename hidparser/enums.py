@@ -54,3 +54,37 @@ class CollectionType(Enum):
     NAMED_ARRAY = 4
     USAGE_SWITCH = 5
     USAGE_MODIFIER = 6
+
+
+class UnitSystem(Enum):
+    NONE = 0x0
+    SI_LINEAR = 0x01
+    SI_ROTATION = 0x02
+    ENGLISH_LINEAR = 0x03
+    ENGLISH_ROTATION = 0x04
+    VENDOR_DEFINED = 0x0F
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.__class__.name, self._name_.replace("_", " ").title())
+
+
+# TODO Support printing out SI units ("cm", "mm", "km" etc...)
+# TODO Support SI Linear, SI Rotation, English Linear and English Rotation
+class UnitLength(Enum):
+    NONE = 0
+    CENTIMETERS = 1
+    METERS = 3
+    KILOMETERS = 6
+    MILLIMETERS = -1
+    MICROMETERS = -4
+    NANOMETERS = -7
+
+
+class UnitMass(Enum):
+    NONE = 0
+    GRAMS = 1
+    KILOGRAMS = 4
+    TON = 7
+    MILLIGRAMS = -2
+    MICROGRAMS = -5
+    NANOGRAMS = -8

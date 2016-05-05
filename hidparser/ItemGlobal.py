@@ -1,6 +1,6 @@
 from hidparser import DeviceBuilder
 from hidparser.Item import ItemType, Item, ValueItem
-
+from hidparser.Unit import Unit as _Unit
 from hidparser.UsagePage import UsagePage
 
 
@@ -84,6 +84,8 @@ class PhysicalMaximumItem(ValueItem):
 
 
 class UnitExponentItem(ValueItem):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.unit_exponent = self.value
 
     @classmethod
     def _get_tag(cls):
@@ -95,6 +97,8 @@ class UnitExponentItem(ValueItem):
 
 
 class UnitItem(Item):
+    def visit(self, descriptor: DeviceBuilder):
+        descriptor.unit = _Unit.from_bytes(self.data)
 
     @classmethod
     def _get_tag(cls):

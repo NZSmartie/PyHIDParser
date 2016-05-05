@@ -10,12 +10,13 @@ At this stage, this library is still in early development and adoption is not re
 
 #### Progress
 
-  - [x] Parse HID descriptor from byte array
-  - [ ] Support for HID spec 1.11 items *(See Issue [#1](https://github.com/NZSmartie/PyHIDParser/issues/1))*
+  - [x] Parse HID Report descriptor from byte array
+    - [ ] Support for HID spec 1.11 items *(See Issue [#1](https://github.com/NZSmartie/PyHIDParser/issues/1))*
     - [x] Main items (Collections, Inputs, Outputs and Features)
-    - [ ] Global items *(missing `unit` and `unit exponent`)*
-    - [ ] Local items *(missing `string index/maximum/minimum` and  delimiter`)*
+    - [x] Global items
+    - [ ] Local items *(missing `delimiter`)*
     - [ ] ~~Support vender defined long items~~ *(not going to happen any time soon)*
+  - [x] Parse HID Physical Descriptor
   - [x] Create an application API for handing HID items - *Don't want the application developer to deal with states, nesting or closing collections, etc*
     - [x] Access reports based on usages
     - [x] Serialize/Deserialize reports to/from the HID device

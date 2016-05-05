@@ -1,10 +1,46 @@
-from hidparser.enums import CollectionType, ReportType, ReportFlags
+from hidparser.enums import CollectionType, ReportType, ReportFlags, UnitSystem
 from hidparser.UsagePage import UsagePage, Usage, UsageType
 from hidparser.helper import ValueRange
 
 from copy import copy as _copy
 from functools import partial as _partial
 from bitstring import BitArray as _BitArray, Bits as _Bits
+
+
+class Unit:
+    """
+    Unit for Report values.
+
+    Attributes:
+        system (UnitSystem): The system used when interpreting the
+    """
+    _map_nibble_exponent = {
+        0x0: 0, 0x1:1, 0x2: 2, 0x3: 3, 0x4: 4, 0x5: 5, 0x6: 6, 0x7: 7,
+        0x8: -8, 0x9: -7, 0xA: -6, 0xB: -5, 0xC: -4, 0xD: -3, 0xE: -2, 0xF: -1
+    }
+
+    def __init__(self):
+        self.system = UnitSystem.NONE
+        self.length = 0
+        self.mass = 0
+        self.time = 0
+        self.temperature = 0
+        self.current = 0
+        self.luminosity = 0
+
+    @classmethod
+    def from_bytes(cls, data: bytes):
+        unit = Unit()
+        unit.system = UnitSystem(data[0]&0x0F)
+        unit.length = cls._map_nibble_exponent[(data[0] & 0xF0) >> 4]
+        if len(data) > 1:
+            unit.mass = cls._map_nibble_exponent[data[1] & 0x0F]
+            unit.time = cls._map_nibble_exponent[(data[1] & 0xF0) >> 4]
+        if len(data) > 2:
+            unit.temperature = cls._map_nibble_exponent[data[2] & 0x0F]
+            unit.current = cls._map_nibble_exponent[(data[2] & 0xF0) >> 4]
+        if len(data) > 3:
+            unit.luminosity = cls._map_nibble_exponent[data[3] & 0x0F]
 
 
 class Report:
@@ -19,6 +55,8 @@ class Report:
             count: int=0,
             logical_range=None,
             physical_range=None,
+            unit=None,
+            exponent=1,
             flags=None,
             parent=None
     ):
@@ -34,6 +72,9 @@ class Report:
             physical_range = ValueRange(*physical_range)
         self.logical_range = logical_range if logical_range is not None else ValueRange() # type: ValueRange
         self.physical_range = physical_range if physical_range is not None else _copy(self.logical_range) # type: ValueRange
+
+        self.unit = unit if unit is not None else Unit()
+        self.unit_exponent = exponent
 
         if type(usages) not in (list, tuple):
             usages = (usages,)

@@ -14,6 +14,9 @@ class DeviceBuilder:
         self.designators = range(0)
         self.strings = range(0)
 
+        self.unit = None
+        self.unit_exponent = 1
+
         self.report_size = 0
         self.report_count = 0
         self.logical_range = ValueRange()
@@ -56,6 +59,8 @@ class DeviceBuilder:
             count=self.report_count,
             logical_range=_copy.copy(self.logical_range),
             physical_range=_copy.copy(self.physical_range),
+            unit=self.unit,
+            exponent=self.unit_exponent,
             flags=flags
         ))
 
