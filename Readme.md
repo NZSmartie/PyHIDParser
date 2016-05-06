@@ -1,5 +1,5 @@
 # PyHIDParser
-#### V0.0.6
+#### V0.0.7
 
 A python library for interpreting a HID descriptor to provide
 an application with byte structures for reading and writing to without the manual labour.
