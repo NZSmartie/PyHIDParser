@@ -113,6 +113,8 @@ class DeviceBuilder:
             self._usages.append(usage.value)
         else:
             usage_page = self._usage_page if (usage & ~0xFFFF) == 0 else UsagePage.find_usage_page((usage & ~0xFFFF) >> 16)
+            if usage_page is None:
+                raise ValueError("Invalid usage page")
             self._usages.append(usage_page.get_usage(usage & 0xFFFF))
 
     def set_usage_page(self, usage_page: UsagePage.__class__):

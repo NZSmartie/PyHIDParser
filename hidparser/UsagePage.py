@@ -101,7 +101,7 @@ class UsagePage(_Enum):
             return cls.usage_page_map[value]
         if value not in range(0xFF00,0xFFFF):
             raise ValueError("Reserved or missing usage page 0x{:04X}".format(value))
-        return None
+        raise NotImplementedError("Yet to support Vendor defined usage pages")
 
 
 class UsageRange:

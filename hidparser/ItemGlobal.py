@@ -1,6 +1,6 @@
 from hidparser import DeviceBuilder
 from hidparser.Item import ItemType, Item, ValueItem
-from hidparser.Unit import Unit as _Unit
+from hidparser.Device import Unit as _Unit
 from hidparser.UsagePage import UsagePage
 
 
