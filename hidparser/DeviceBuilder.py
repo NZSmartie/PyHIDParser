@@ -9,8 +9,11 @@ class DeviceBuilder:
     def __init__(self):
         self._state_stack = []
         self._report_id = 0
+
         self._usage_page = None
         self._usages = []
+        self._last_usage = None
+
         self.designators = range(0)
         self.strings = range(0)
 
@@ -27,13 +30,14 @@ class DeviceBuilder:
 
     def add_report(self, report_type: ReportType, flags):
         usages = []
-        try:
-            while len(usages) < self.report_count:
-                usage = self._usages.pop(0) if len(self._usages) > 1 else self._usages[0]
-                usages.extend(usage.get_range() if isinstance(usage, UsageRange) else [usage])
-        except IndexError:
-            if not flags & ReportFlags.CONSTANT:
-                raise
+        if not flags & ReportFlags.CONSTANT or len(self._usages):
+            if len(self._usages) is 0:
+                usages = [self._last_usage]*self.report_count
+            else:
+                while len(usages) < self.report_count:
+                    usage = self._usages.pop(0)
+                    self._last_usage = usage
+                    usages.extend(usage.get_range() if isinstance(usage, UsageRange) else [usage])
 
         designators = range(0)
         if len(self.designators) > 0:
