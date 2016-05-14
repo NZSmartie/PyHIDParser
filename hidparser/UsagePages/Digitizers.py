@@ -49,16 +49,43 @@ class Digitizers(UsagePage):
     ERASER = Usage(0x45,UsageType.CONTROL_MOMENTARY)
     TABLET_PICK = Usage(0x46,UsageType.CONTROL_MOMENTARY)
 
-    # HID USage Table Request 30: Addition of usages related to touch digitizers
+    # HID Usage Table Request 30: Addition of usages related to touch digitizers
     TOUCH_VALID = Usage(0x47, UsageType.CONTROL_MOMENTARY)
     WIDTH = Usage(0x48, UsageType.DATA_DYNAMIC_VALUE)
     HEIGHT = Usage(0x49, UsageType.DATA_DYNAMIC_VALUE)
 
-    # HID USage Table Request 34: Addition of usages related to multi-touch digitizers
-    CONTACT_IDENTIFIER = Usage(0x51, UsageType.DATA_DYNAMIC_VALUE)
+    # HID Usage Table Request 34: Addition of usages related to multi-touch digitizers
     DEVICE_CONFIGURATION = Usage(0x0E, UsageType.COLLECTION_APPLICATION)
+    DEVICE_SETTINGS = Usage(0x23, UsageType.COLLECTION_LOGICAL)
+
+    CONTACT_IDENTIFIER = Usage(0x51, UsageType.DATA_DYNAMIC_VALUE)
     DEVICE_MODE = Usage(0x52, UsageType.DATA_DYNAMIC_VALUE)
     DEVICE_IDENTIFIER = Usage(0x53, UsageType.DATA_DYNAMIC_VALUE)
     CONTACT_COUNT = Usage(0x54, UsageType.DATA_DYNAMIC_VALUE)
     CONTACT_COUNT_MAXIMUM = Usage(0x55, UsageType.DATA_STATIC_VALUE)
-    DEVICE_SETTINGS = Usage(0x23, UsageType.COLLECTION_LOGICAL)
+    # Used by Microsoft... but not documented. Thanks!
+    SCAN_TIME = Usage(0x56, UsageType.DATA_DYNAMIC_VALUE)
+
+    # HID Usage Table Request 46: Additional Stylus Usages
+    SECONDARY_BARREL_SWITCH = Usage(0x5A, UsageType.CONTROL_MOMENTARY)
+    TRANSDUCER_SERIAL_NUMBER = Usage(0x5B, UsageType.DATA_STATIC_VALUE)
+
+    # HID Usage Table Request 60: Stylus Width and Type Usages, Diagnostics, and Errors
+    PREFERRED_COLOR_IS_LOCKED = Usage(0x5D, UsageType.CONTROL_MOMENTARY)
+    PREFERRED_LINE_WIDTH = Usage(0x5E, UsageType.DATA_DYNAMIC_VALUE)
+    PREFERRED_LINE_WIDTH_IS_LOCKED = Usage(0x5F, UsageType.CONTROL_MOMENTARY)
+    PREFERRED_LINE_STYLE = Usage(0x70, UsageType.COLLECTION_NAMED_ARRAY)
+    PREFERRED_LINE_STYLE_IS_LOCKED = Usage(0x71, UsageType.CONTROL_MOMENTARY)
+    INK = Usage(0x72, UsageType.DATA_SELECTOR)
+    PENCIL = Usage(0x73, UsageType.DATA_SELECTOR)
+    HIGHLIGHTER = Usage(0x74, UsageType.DATA_SELECTOR)
+    CHISEL_MARKER = Usage(0x75, UsageType.DATA_SELECTOR)
+    BRUSH = Usage(0x76, UsageType.DATA_SELECTOR)
+    NO_PREFERENCE = Usage(0x77, UsageType.DATA_SELECTOR)
+
+    DIGITIZER_DIAGNOSTIC = Usage(0x80, UsageType.COLLECTION_LOGICAL)
+    DIGITIZER_ERROR = Usage(0x81, UsageType.COLLECTION_NAMED_ARRAY)
+    ERR_NORMAL_STATUS = Usage(0x82, UsageType.DATA_SELECTOR)
+    ERR_TRANSDUCERS_EXCEEDED = Usage(0x83, UsageType.DATA_SELECTOR)
+    ERR_FULL_TRANS_FEATURES_UNAVAIL = Usage(0x84, UsageType.DATA_SELECTOR)
+    ERR_CHARGE_LOW = Usage(0x85, UsageType.DATA_SELECTOR)
