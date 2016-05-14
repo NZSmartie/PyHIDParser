@@ -86,45 +86,7 @@ class PhysicalDescriptor:
         )
 
 
-class PhysicalDescriptorSet:
-    _total = 0
-    _length = 0
-    _sets = {}  # type: Dict[int, PhysicalDescriptorSet]
-
-    @classmethod
-    def get_descriptor_by_index(cls, index):
-        return cls._sets[index]
-
-    @classmethod
-    def parse(cls, index, data):
-        data = bytes(data)
-        if index is 0:
-            if len(data) != 3:
-                raise ValueError("Physical descriptor at index 0 is 3 bytes in size")
-            cls._total, cls._length = _struct.unpack("<BH",data)
-            return
-        if cls._length is 0:
-            raise ValueError("Please parse the Physical Descriptor Set at index 0 first")
-        if index > cls._total:
-            raise IndexError("index({:d}) is out of bounds".format(index))
-        if index in cls._sets.keys():
-            del cls._sets[index]
-        bias = Bias((data[0] & 0xE0) >> 5)
-        preference = data[0] & 0x1F
-        pdset = PhysicalDescriptorSet(index, bias, preference)
-        for i in range(cls._length):
-            offset = (i * 2) + 1
-            designator, flags = _struct.unpack("<BB",data[offset:offset+2])
-            pdset.append(PhysicalDescriptor(
-                Designator(designator),
-                Qualifier((flags & 0xE0) >> 5),
-                flags & 0x1F
-            ))
-
-    @classmethod
-    def get_total(cls):
-        return cls._total
-
+class PhysicalDescriptorSubSet:
     def __init__(self, index, bias: Bias, preference: int=0, descriptors=None):
         if type(index) is not int or index in self._sets.keys():
             raise IndexError("Invalid index for PhysicalDescriptorSet")
@@ -139,8 +101,6 @@ class PhysicalDescriptorSet:
             if type(descriptors) not in (list, tuple):
                 descriptors = (descriptors,)
             self.extend(descriptors)
-
-        self._sets[index] = self
 
     def __iter__(self):
         return iter(self.descriptors)
@@ -168,3 +128,44 @@ class PhysicalDescriptorSet:
             self.preference,
             ", ".join([desc.__repr__() for desc in self.descriptors])
         )
+
+
+class PhysicalDescriptorSet:
+    def __init__(self):
+        self._total = 0
+        self._length = 0
+        self._sets = {}  # type: Dict[int, PhysicalDescriptorSubSet]
+
+    def parse(self, index, data):
+        data = bytes(data)
+        if index is 0:
+            if len(data) != 3:
+                raise ValueError("Physical descriptor at index 0 is 3 bytes in size")
+            self._total, self._length = _struct.unpack("<BH", data)
+            return
+        if self._length is 0:
+            raise ValueError("Please parse the Physical Descriptor Set at index 0 first")
+        if index > self._total:
+            raise IndexError("index({:d}) is out of bounds".format(index))
+        if index in self._sets.keys():
+            del self._sets[index]
+        bias = Bias((data[0] & 0xE0) >> 5)
+        preference = data[0] & 0x1F
+
+        pdset = PhysicalDescriptorSubSet(index, bias, preference)
+        self._sets[index] = pdset
+
+        for i in range(self._length):
+            offset = (i * 2) + 1
+            designator, flags = _struct.unpack("<BB",data[offset:offset+2])
+            pdset.append(PhysicalDescriptor(
+                Designator(designator),
+                Qualifier((flags & 0xE0) >> 5),
+                flags & 0x1F
+            ))
+
+    def __getitem__(self, item):
+        return self._sets[item]
+
+    def __len__(self):
+        return self._total
