@@ -87,10 +87,7 @@ class PhysicalDescriptor:
 
 
 class PhysicalDescriptorSubSet:
-    def __init__(self, index, bias: Bias, preference: int=0, descriptors=None):
-        if type(index) is not int or index in self._sets.keys():
-            raise IndexError("Invalid index for PhysicalDescriptorSet")
-        self.index = index
+    def __init__(self, bias: Bias, preference: int=0, descriptors=None):
         self.bias = bias
         if not 0 <= preference <= 31:
             raise ValueError("preference({}) can not be outside of range 0 to 31".format(preference))
@@ -152,7 +149,7 @@ class PhysicalDescriptorSet:
         bias = Bias((data[0] & 0xE0) >> 5)
         preference = data[0] & 0x1F
 
-        pdset = PhysicalDescriptorSubSet(index, bias, preference)
+        pdset = PhysicalDescriptorSubSet(bias, preference)
         self._sets[index] = pdset
 
         for i in range(self._length):
