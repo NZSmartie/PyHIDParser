@@ -8,22 +8,24 @@ from hidparser.helper import ValueRange
 class DeviceBuilder:
     def __init__(self):
         self._state_stack = []
-        self._report_id = 0
 
-        self._usage_page = None
+        # Global Items
+        self.usage_page = None
+        self.unit = None
+        self.unit_exponent = 1
+
+        self.report_id = 0
+        self.report_size = 0
+        self.report_count = 0
+        self.logical_range = ValueRange()
+        self.physical_range = self.logical_range
+
+        # Local Items
         self._usages = []
         self._last_usage = None
 
         self.designators = range(0)
         self.strings = range(0)
-
-        self.unit = None
-        self.unit_exponent = 1
-
-        self.report_size = 0
-        self.report_count = 0
-        self.logical_range = ValueRange()
-        self.physical_range = self.logical_range
 
         self._collection = Collection(allowed_usage_types=UsageType.COLLECTION_APPLICATION)
         self._current_collection = self._collection
@@ -54,7 +56,7 @@ class DeviceBuilder:
             self.strings = self.strings[strings_diff + 1:]
 
         self._current_collection.append(Report(
-            report_id=self._report_id,
+            report_id=self.report_id,
             report_type=report_type,
             usages=usages,
             designators=designators,
@@ -69,7 +71,7 @@ class DeviceBuilder:
         ))
 
     def set_report_id(self, report_id: int):
-        self._report_id = report_id
+        self.report_id = report_id
 
     def set_designator_range(self, minimum=None, maximum=None):
         if minimum is None:
@@ -88,7 +90,7 @@ class DeviceBuilder:
     def set_usage_range(self, minimum=None, maximum=None):
         usage = self._usages[len(self._usages)-1] if len(self._usages) else None
         if usage is None or not isinstance(usage, UsageRange):
-            usage = UsageRange(self._usage_page)
+            usage = UsageRange(self.usage_page)
             self._usages.append(usage)
 
         if minimum is not None:
@@ -116,13 +118,13 @@ class DeviceBuilder:
         elif isinstance(usage, UsagePage):
             self._usages.append(usage.value)
         else:
-            usage_page = self._usage_page if (usage & ~0xFFFF) == 0 else UsagePage.find_usage_page((usage & ~0xFFFF) >> 16)
+            usage_page = self.usage_page if (usage & ~0xFFFF) == 0 else UsagePage.find_usage_page((usage & ~0xFFFF) >> 16)
             if usage_page is None:
                 raise ValueError("Invalid usage page")
             self._usages.append(usage_page.get_usage(usage & 0xFFFF))
 
     def set_usage_page(self, usage_page: UsagePage.__class__):
-        self._usage_page = usage_page
+        self.usage_page = usage_page
         self._usages.clear()
 
     def push_collection(self, collection: CollectionType):
@@ -150,13 +152,21 @@ class DeviceBuilder:
         return self
 
     def push(self):
-        state = _copy.deepcopy(self.__dict__)
-        if "_state_stack" in state.keys():
-            del state["_state_stack"]
+        """
+        Pushes the state of all the global items onto the stack
+        """
+        global_items = (
+            "usage_page", "unit","unit_exponent", "report_id",
+            "report_size", "report_count", "logical_range", "physical_range"
+        )
+        state = _copy.deepcopy({k:v for k,v in self.__dict__.items() if k in global_items})
         self._state_stack.append(state)
         return self
 
     def pop(self):
+        """
+        Pops and restores the global item states from the stack
+        """
         if len(self._state_stack) > 0:
             state = self._state_stack.pop()
             self.__dict__.update(state)
