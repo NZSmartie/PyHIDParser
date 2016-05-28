@@ -14,6 +14,32 @@ class Unit:
     Attributes:
         system (UnitSystem): The system used when interpreting the
     """
+    NOT_SPECIFIED = 0x00
+    LUX = 0x010000E1
+    KELVIN = 0x00010001
+    FAHRENHEIT = 0x00010003
+    PASCAL = 0xE1F1
+    NEWTON = 0xE111
+    METERS_PER_SECOND = 0xF011
+    METERS_PER_SEC_SQRD = 0xE011
+    FARAD = 0x00204FE1
+    AMPERE = 0x00100001
+    WATT = 0xD121
+    HENRY = 0x00E0E121
+    OHM = 0x00E0D121
+    VOLT = 0x00F0D121
+    HERTZ = 0xF001
+    DEGREES = 0x14
+    DEGREES_PER_SECOND = 0xF014
+    DEGREES_PER_SEC_SQRD = 0xE014
+    RADIANS = 0x12
+    RADIANS_PER_SECOND = 0xF012
+    RADIANS_PER_SEC_SQRD = 0xE012
+    SECOND = 0x1001
+    GAUSS = 0x00F0E101
+    GRAM = 0x0101
+    CENTIMETER = 0x11
+
     _map_nibble_exponent = {
         0x0: 0, 0x1:1, 0x2: 2, 0x3: 3, 0x4: 4, 0x5: 5, 0x6: 6, 0x7: 7,
         0x8: -8, 0x9: -7, 0xA: -6, 0xB: -5, 0xC: -4, 0xD: -3, 0xE: -2, 0xF: -1
