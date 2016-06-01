@@ -3,6 +3,9 @@ from hidparser.Item import Item, ItemType, ValueItem
 
 
 class UsageItem(ValueItem):
+    def __init__(self, *args, **kwargs):
+        kwargs["signed"] = False
+        super(UsageItem, self).__init__(*args, **kwargs)
 
     def visit(self, descriptor: DeviceBuilder):
         descriptor.add_usage(self.value)

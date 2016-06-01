@@ -12,7 +12,7 @@ class ValueRange:
     def in_range(self, value):
         return self.minimum <= value <= self.maximum
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         if not isinstance(other, self.__class__):
             raise ValueRange("other is not of type {}".format(self.__class__.__name__))
         return self.minimum == other.minimum and self.maximum == other.maximum

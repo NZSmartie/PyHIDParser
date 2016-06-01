@@ -118,11 +118,15 @@ class Report:
     @property
     def value(self):
         if self.count>1:
+            if self.logical_range == self.physical_range:
+                return [int(value) for value in self._values]
             return self._values
+        if self.logical_range == self.physical_range:
+            return int(self._values[0])
         return self._values[0]
 
     @value.setter
-    def value_set(self, value):
+    def value(self, value):
         if self.count > 1:
             if type(value) is not list:
                 raise ValueError("Can not set {} to {}".format(type(value), self.__class__.__name__))
@@ -135,6 +139,8 @@ class Report:
             self._values[0] = value
 
     def __getitem__(self, key):
+        if self.logical_range == self.physical_range:
+            return int(self._values[key])
         return self._values[key]
 
     def __setitem__(self, key, value):
@@ -345,6 +351,13 @@ class ReportGroup:
 
 class Device:
     def deserialize(self, data: bytes, report_type: ReportType=None):
+        """
+        Deserialises the raw HID data received from the device.
+        If ReportIDs are used, then the first byte must be the ReportID
+        :param data:
+        :param report_type:
+        :return: None
+        """
         report = 0
         if len(self._reports) == 0:
             raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
@@ -358,27 +371,40 @@ class Device:
         if report_type is ReportType.INPUT:
             if self._reports[report].input_size != len(data):
                 raise ValueError("data({}) does not match input_size({})".format(len(data),self._reports[report].input_size))
-            return self._reports[report].inputs.deserialize(data, report_type)
+            self._reports[report].inputs.deserialize(data, report_type)
         if report_type is ReportType.OUTPUT:
             if self._reports[report].output_size != len(data):
                 raise ValueError("data({}) does not match output_size({})".format(len(data)),self._reports[report].output_size)
-            return self._reports[report].outputs.deserialize(data, report_type)
+            self._reports[report].outputs.deserialize(data, report_type)
         if report_type is ReportType.FEATURE:
             if self._reports[report].feature_size != len(data):
                 raise ValueError("data({}) does not match feature_size({})".format(len(data),self._reports[report].feature_size))
-            return self._reports[report].features.deserialize(data, report_type)
+            self._reports[report].features.deserialize(data, report_type)
 
     def serialize(self, report: int = 0, report_type: ReportType=None) -> bytes:
+        """
+        Serialises the reports into a bytes object. If ReportIDs are used, then report must be specified
+        :param report: The ReportID to serialise. Default: 0
+        :param report_type: The report type to serialise. Default: ReportType.OUTPUT
+        :return: bytes
+        """
         if report_type is None:
             report_type = ReportType.OUTPUT
         if len(self._reports) == 0:
             raise ValueError("No reports have been created for {}".format(self.__class__.__name__))
+
+        data = None
         if report_type is ReportType.INPUT:
-            return self._reports[report].inputs.serialize(report_type)
+            data = self._reports[report].inputs.serialize(report_type)
         if report_type is ReportType.OUTPUT:
-            return self._reports[report].outputs.serialize(report_type)
+            data = self._reports[report].outputs.serialize(report_type)
         if report_type is ReportType.FEATURE:
-            return self._reports[report].features.serialize(report_type)
+            data = self._reports[report].features.serialize(report_type)
+
+        # Prepend the ReportID if not 0
+        if report > 0:
+            data.prepend(bytes([report]))
+        return data.bytes()
 
     def __init__(self, collection=None):
         self._reports = {}  # type: _Dict[int, ReportGroup]
@@ -388,7 +414,19 @@ class Device:
 
     @property
     def reports(self):
+        """
+        Returns a dictionary that maps report ids to collections
+        :return:
+        """
         return self._reports
+
+    @property
+    def all(self):
+        """
+        Returns the root collection, not bound to any report group
+        :return:
+        """
+        return self._collection
 
     def _populate_report_types(self, collection: Collection, path=None):
         if path is None:
