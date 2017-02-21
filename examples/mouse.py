@@ -2,7 +2,7 @@ import hidparser
 from hidparser.UsagePages import GenericDesktop, Button
 
 
-if __name__ is '__main__':
+if __name__ == '__main__':
     mouse = bytes([
         0x05, 0x01,  # USAGE_PAGE (Generic Desktop)
         0x09, 0x02,  # USAGE (Mouse)
