@@ -5,3 +5,5 @@ from hidparser.UsagePages.Button import Button
 from hidparser.UsagePages.Digitizers import Digitizers
 
 from hidparser.UsagePages.Sensor import Sensor
+from hidparser.UsagePages.Power import Power
+from hidparser.UsagePages.Battery import Battery
